@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Modul DOM 01 — Memilih &amp; Mengubah Halaman</title>
+    <style>
+        :root {
+            --ink: #2c2c2b;
+            --muted: #6f6d68;
+            --canvas: #fff;
+            --soft: #f9f8f7;
+            --surface: #f0efed;
+            --line: #e6e5e3;
+            --blue: #2783de;
+            --blue-soft: #e5f2fc;
+            --green: #31875f;
+            --green-soft: #e8f1ec;
+            --orange: #b76a2d;
+            --orange-soft: #fbebde;
+            --red: #d44f45;
+            --red-soft: #fce9e7;
+            --code: #202124;
+            --radius: 10px
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--soft);
+            color: var(--ink);
+            font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: var(--canvas);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .topbar-in {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px
+        }
+
+        .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--blue);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 13px;
+            flex: none
+        }
+
+        .brand {
+            font-weight: 750;
+            font-size: 15px;
+            line-height: 1.25
+        }
+
+        .brand small {
+            display: block;
+            color: var(--muted);
+            font-weight: 500;
+            font-size: 12.5px
+        }
+
+        .top-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .prog {
+            display: flex;
+            align-items: center;
+            gap: 9px
+        }
+
+        .prog-text {
+            font-size: 12.5px;
+            color: var(--muted);
+            white-space: nowrap;
+            font-weight: 650
+        }
+
+        .prog-track {
+            width: 110px;
+            height: 7px;
+            border-radius: 99px;
+            background: var(--surface);
+            overflow: hidden
+        }
+
+        .prog-bar {
+            height: 100%;
+            width: 0;
+            background: var(--green);
+            border-radius: 99px;
+            transition: width .3s
+        }
+
+        .subnav {
+            position: sticky;
+            top: 59px;
+            z-index: 29;
+            background: var(--soft);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .subnav-in {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto
+        }
+
+        .subnav a {
+            padding: 11px 13px;
+            font-size: 14px;
+            font-weight: 650;
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap
+        }
+
+        .subnav a:hover {
+            color: var(--ink)
+        }
+
+        .wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px 72px
+        }
+
+        section {
+            scroll-margin-top: 112px
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 700
+        }
+
+        h1 {
+            font-size: 32px;
+            line-height: 1.14;
+            letter-spacing: -.02em;
+            margin: 7px 0 10px
+        }
+
+        h2.sec {
+            font-size: 24px;
+            letter-spacing: -.01em;
+            margin: 44px 0 14px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        h3 {
+            font-size: 17.5px;
+            margin: 26px 0 8px
+        }
+
+        h4 {
+            font-size: 15px;
+            margin: 18px 0 6px
+        }
+
+        p {
+            margin: 0 0 12px
+        }
+
+        .lede {
+            font-size: 17px;
+            color: var(--muted);
+            max-width: 620px
+        }
+
+        .card {
+            background: var(--canvas);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            margin: 0 0 18px
+        }
+
+        .goal {
+            background: var(--blue-soft);
+            border: 1px solid #cbe4f8;
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 22px 0 8px
+        }
+
+        .goal h3 {
+            margin: 0 0 8px;
+            font-size: 16px
+        }
+
+        .goal ol {
+            margin: 0;
+            padding-left: 20px
+        }
+
+        .goal li {
+            margin: 6px 0
+        }
+
+        code {
+            background: var(--surface);
+            padding: 1.5px 5px;
+            border-radius: 4px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: .9em
+        }
+
+        pre {
+            margin: 0 0 12px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: var(--code);
+            color: #e8eaed;
+            overflow-x: auto;
+            font: 13.5px/1.6 Consolas, "Courier New", monospace
+        }
+
+        pre.plain {
+            background: var(--surface);
+            color: var(--ink)
+        }
+
+        pre.tree {
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 13px;
+            line-height: 1.75
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14.5px;
+            margin: 0 0 14px
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top
+        }
+
+        th {
+            font-size: 12px;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0
+        }
+
+        .callout {
+            border-radius: 9px;
+            padding: 14px 16px;
+            margin: 0 0 14px;
+            font-size: 15px;
+            border: 1px solid
+        }
+
+        .callout.info {
+            background: var(--blue-soft);
+            border-color: #cbe4f8
+        }
+
+        .callout.warn {
+            background: var(--orange-soft);
+            border-color: #f0d4bb
+        }
+
+        .callout.bad {
+            background: var(--red-soft);
+            border-color: #efc4c0
+        }
+
+        .callout strong {
+            display: block;
+            margin-bottom: 3px
+        }
+
+        ul.tight {
+            margin: 0 0 12px;
+            padding-left: 22px
+        }
+
+        ul.tight li {
+            margin: 5px 0
+        }
+
+        .compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px
+        }
+
+        .compare>div {
+            background: var(--soft);
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 14px 16px
+        }
+
+        .compare h4 {
+            margin: 0 0 7px;
+            font-size: 13px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+
+        .compare p {
+            margin: 0;
+            font-size: 14.5px
+        }
+
+        .ex {
+            background: var(--canvas);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            margin: 0 0 22px;
+            overflow: hidden
+        }
+
+        .ex-head {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--line);
+            background: var(--soft)
+        }
+
+        .ex-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 7px;
+            flex-wrap: wrap
+        }
+
+        .badge {
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 750;
+            background: var(--blue-soft);
+            color: #155f9f
+        }
+
+        .badge.task {
+            background: var(--orange-soft);
+            color: #85501f
+        }
+
+        .badge.ok {
+            background: var(--green-soft);
+            color: #1f6644
+        }
+
+        .ex-head h3 {
+            margin: 0 0 4px;
+            font-size: 19px
+        }
+
+        .ex-head .target {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14.5px
+        }
+
+        .ex-body {
+            padding: 20px 22px
+        }
+
+        .ex-body>p:first-child {
+            margin-top: 0
+        }
+
+        details {
+            background: var(--soft);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 11px 14px;
+            margin: 0 0 14px
+        }
+
+        details summary {
+            cursor: pointer;
+            font-weight: 650;
+            font-size: 14.5px
+        }
+
+        details pre {
+            margin: 12px 0 2px
+        }
+
+        .label {
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin: 16px 0 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .label .btns {
+            margin-left: auto;
+            display: flex;
+            gap: 7px
+        }
+
+        textarea.editor {
+            width: 100%;
+            min-height: 190px;
+            background: var(--code);
+            color: #e8eaed;
+            border: 0;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font: 13.5px/1.7 Consolas, "Courier New", monospace;
+            resize: vertical;
+            tab-size: 2
+        }
+
+        textarea.editor:focus-visible {
+            outline: 3px solid rgba(39, 131, 222, .4);
+            outline-offset: 1px
+        }
+
+        textarea.note {
+            width: 100%;
+            min-height: 76px;
+            background: var(--canvas);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 11px 13px;
+            font: 15px/1.6 inherit;
+            resize: vertical
+        }
+
+        textarea.note:focus-visible {
+            outline: 3px solid rgba(39, 131, 222, .28);
+            outline-offset: 1px
+        }
+
+        .btn {
+            border: 1px solid var(--line);
+            background: var(--canvas);
+            color: var(--ink);
+            border-radius: 8px;
+            min-height: 38px;
+            padding: 8px 13px;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn:hover {
+            background: var(--surface)
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid rgba(39, 131, 222, .28);
+            outline-offset: 2px
+        }
+
+        .btn.primary {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff
+        }
+
+        .btn.primary:hover {
+            background: #1f6fc0
+        }
+
+        .btn.big {
+            min-height: 44px;
+            padding: 11px 20px;
+            font-size: 15px
+        }
+
+        .frame-wrap {
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            overflow: hidden;
+            background: var(--canvas);
+            min-height: 150px
+        }
+
+        .frame-wrap iframe {
+            width: 100%;
+            height: 230px;
+            border: 0;
+            display: block;
+            background: #fff
+        }
+
+        .hint {
+            font-size: 13px;
+            color: var(--muted);
+            margin: 6px 0 0
+        }
+
+        .result {
+            display: none;
+            margin-top: 14px;
+            border-radius: 9px;
+            padding: 14px 16px;
+            border: 1px solid
+        }
+
+        .result.show {
+            display: block
+        }
+
+        .result.pass {
+            background: var(--green-soft);
+            border-color: #bddbc9
+        }
+
+        .result.fail {
+            background: var(--red-soft);
+            border-color: #efc4c0
+        }
+
+        .result h4 {
+            margin: 0 0 8px;
+            font-size: 15px
+        }
+
+        .test-row {
+            display: flex;
+            gap: 9px;
+            align-items: flex-start;
+            font-size: 14.5px;
+            margin: 4px 0
+        }
+
+        .test-icon {
+            font-weight: 800;
+            width: 15px;
+            flex: none
+        }
+
+        .console {
+            margin-top: 10px;
+            background: var(--code);
+            color: #e8eaed;
+            border-radius: 7px;
+            padding: 10px 13px;
+            font: 12.5px/1.6 Consolas, "Courier New", monospace;
+            white-space: pre-wrap;
+            max-height: 150px;
+            overflow: auto
+        }
+
+        .ident {
+            display: grid;
+            grid-template-columns: 1fr 1fr 170px;
+            gap: 12px
+        }
+
+        .ident label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 5px
+        }
+
+        .ident input {
+            width: 100%;
+            min-height: 42px;
+            padding: 9px 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font: inherit;
+            background: var(--canvas)
+        }
+
+        .ident input:focus-visible {
+            outline: 3px solid rgba(39, 131, 222, .28);
+            outline-offset: 1px
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 26px;
+            transform: translateX(-50%) translateY(14px);
+            background: var(--ink);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 9px;
+            font-size: 14.5px;
+            font-weight: 650;
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s;
+            z-index: 50
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%)
+        }
+
+        #printReport {
+            display: none
+        }
+
+        footer {
+            color: var(--muted);
+            font-size: 13.5px;
+            text-align: center;
+            margin-top: 40px
+        }
+
+        @media(max-width:760px) {
+            .compare {
+                grid-template-columns: 1fr
+            }
+
+            .ident {
+                grid-template-columns: 1fr
+            }
+
+            .topbar-in,
+            .subnav-in,
+            .wrap {
+                padding-left: 16px;
+                padding-right: 16px
+            }
+
+            h1 {
+                font-size: 26px
+            }
+
+            .prog-track {
+                width: 70px
+            }
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 14mm
+            }
+
+            body {
+                background: #fff;
+                font-size: 10.5pt
+            }
+
+            .topbar,
+            .subnav,
+            .wrap,
+            .toast {
+                display: none !important
+            }
+
+            #printReport {
+                display: block
+            }
+
+            .print-cover {
+                border-bottom: 2px solid #2c2c2b;
+                padding-bottom: 12px;
+                margin-bottom: 16px
+            }
+
+            .print-cover h1 {
+                font-size: 19pt;
+                margin: 0 0 4px
+            }
+
+            .print-cover p {
+                color: #555;
+                margin: 0
+            }
+
+            .print-meta {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 5px 20px;
+                margin-top: 12px;
+                font-size: 10pt
+            }
+
+            .print-section {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                padding: 12px 14px;
+                margin-bottom: 12px
+            }
+
+            .print-section h2 {
+                font-size: 12.5pt;
+                margin: 0 0 6px
+            }
+
+            .print-section h3 {
+                font-size: 9.5pt;
+                margin: 10px 0 4px;
+                text-transform: uppercase;
+                letter-spacing: .04em;
+                color: #555
+            }
+
+            .print-code {
+                background: #f4f4f4;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 8px 10px;
+                font: 8.6pt/1.5 Consolas, monospace;
+                white-space: pre-wrap
+            }
+
+            .print-reflection {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 8px 10px;
+                min-height: 34px;
+                font-size: 10pt
+            }
+
+            .print-status {
+                font-weight: 800
+            }
+
+            .print-pass {
+                color: #1f6644
+            }
+
+            .print-fail {
+                color: #a5352c
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="topbar-in">
+            <div class="logo">DOM</div>
+            <div class="brand">Modul DOM 01<small>Memilih &amp; Mengubah • Peserta Magang/PKL SMK RPL</small></div>
+            <div class="top-right">
+                <div class="prog">
+                    <span class="prog-text" id="progressText">0 / 7 selesai</span>
+                    <div class="prog-track">
+                        <div class="prog-bar" id="progressBar"></div>
+                    </div>
+                </div>
+                <button class="btn" id="printButton">⎙ Cetak / Simpan PDF</button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="subnav">
+        <div class="subnav-in">
+            <a href="#materi">Materi</a>
+            <a href="#praktikum">Praktikum</a>
+            <a href="#tugas">Tugas</a>
+            <a href="#laporan">Pengumpulan</a>
+        </div>
+    </nav>
+
+    <div class="wrap">
+
+        <section id="materi">
+            <div class="eyebrow">Manipulasi DOM • Hari 1 dari 4</div>
+            <h1>Halaman bisa diubah dari JavaScript.</h1>
+            <p class="lede">Sampai hari ini kodemu hanya berbicara ke <code>console.log</code>. Hari ini kodemu mulai
+                berbicara ke halaman: memilih bagian tertentu, lalu mengubah isi dan tampilannya.</p>
+
+            <div class="goal">
+                <h3>Tujuan pembelajaran</h3>
+                <ol>
+                    <li>Menjelaskan apa itu DOM dan mengapa halaman bisa berubah tanpa dimuat ulang.</li>
+                    <li>Memilih satu elemen dengan <code>querySelector</code> dan banyak elemen dengan
+                        <code>querySelectorAll</code>.</li>
+                    <li>Mengubah teks yang tampil dengan <code>textContent</code>.</li>
+                    <li>Mengubah tampilan dengan <code>classList</code> tanpa merusak kelas yang sudah ada.</li>
+                </ol>
+            </div>
+
+            <h2 class="sec">Mengapa kita perlu DOM</h2>
+            <p>Bayangkan papan progres magang yang menampilkan total jam kerjamu. Tanpa DOM, angkanya ditulis langsung
+                di HTML — setiap kali berubah, filenya harus diedit dan halaman dimuat ulang.</p>
+            <div class="compare">
+                <div>
+                    <h4>Tanpa DOM</h4>
+                    <p>Angka ditulis tetap di HTML. Kalau totalnya berubah, kamu harus mengedit file dan menyimpan
+                        ulang. Halaman hanya bisa dibaca.</p>
+                </div>
+                <div>
+                    <h4>Dengan DOM</h4>
+                    <p>Angka dihitung oleh JavaScript lalu ditulis ke halaman saat itu juga. Data berganti, tampilan
+                        ikut berganti. Halaman jadi hidup.</p>
+                </div>
+            </div>
+            <p>Semua yang kamu pelajari sebelumnya tetap terpakai: variabel untuk menyimpan data, pengkondisian untuk
+                memutuskan, perulangan untuk memproses banyak data. Yang baru hari ini hanyalah <em>tujuan akhirnya</em>
+                — hasilnya tidak lagi dicetak ke Console, melainkan ditulis ke halaman.</p>
+
+            <h2 class="sec">Apa itu DOM</h2>
+            <p>Ketika browser membaca file HTML, ia tidak menyimpannya sebagai teks. Browser membangunnya menjadi
+                <strong>pohon objek</strong> — setiap tag menjadi satu objek yang bisa disentuh oleh JavaScript. Pohon
+                inilah yang disebut DOM (<em>Document Object Model</em>).</p>
+            <p>HTML seperti ini:</p>
+            <pre class="plain">&lt;div class="kartu"&gt;
+  &lt;h2 id="nama"&gt;Rizky&lt;/h2&gt;
+  &lt;p class="divisi"&gt;Web&lt;/p&gt;
+&lt;/div&gt;</pre>
+            <p>oleh browser dibangun menjadi pohon seperti ini:</p>
+            <pre class="tree">document
+└─ html
+   └─ body
+      └─ div.kartu
+         ├─ h2#nama      → teks: "Rizky"
+         └─ p.divisi     → teks: "Web"</pre>
+            <p>Karena bentuknya pohon, setiap elemen punya alamat yang bisa dituju. Pekerjaan kita hari ini selalu dua
+                langkah: <strong>pilih</strong> elemennya, lalu <strong>ubah</strong> sesuatu padanya.</p>
+
+            <h2 class="sec">Langkah 1 — Memilih elemen</h2>
+            <p>Untuk memilih satu elemen, gunakan <code>document.querySelector()</code>. Isinya ditulis <strong>persis
+                    seperti selector CSS</strong>: pakai <code>#</code> untuk id, pakai <code>.</code> untuk class.</p>
+            <pre>const nama = document.querySelector("#nama");     // id
+const divisi = document.querySelector(".divisi"); // class
+const judul = document.querySelector("h2");       // nama tag</pre>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Di HTML</th>
+                        <th>Selector</th>
+                        <th>Artinya</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>id="nama"</code></td>
+                        <td><code>"#nama"</code></td>
+                        <td>satu elemen dengan id itu</td>
+                    </tr>
+                    <tr>
+                        <td><code>class="divisi"</code></td>
+                        <td><code>".divisi"</code></td>
+                        <td>elemen berkelas itu</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;h2&gt;</code></td>
+                        <td><code>"h2"</code></td>
+                        <td>elemen dengan nama tag itu</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout bad"><strong>Kesalahan nomor satu pemula</strong>Menulis
+                <code>querySelector("nama")</code> tanpa tanda pagar. Itu berarti “carikan elemen bertag
+                <code>&lt;nama&gt;</code>”, yang tidak ada — hasilnya <code>null</code>.</div>
+            <p>Kalau kamu butuh <strong>banyak</strong> elemen sekaligus, pakai <code>querySelectorAll()</code>.
+                Perhatikan akhiran <code>All</code>-nya: hasilnya kumpulan, bukan satu elemen. Kumpulan tidak bisa
+                langsung diubah — harus dilewati satu per satu dengan perulangan.</p>
+            <pre>const semuaHari = document.querySelectorAll(".hari");
+
+semuaHari.forEach(function (hari) {
+  // di sini "hari" adalah satu elemen
+});</pre>
+
+            <h2 class="sec">Langkah 2 — Mengubah teks dengan textContent</h2>
+            <p>Setelah elemennya dipegang, isi teksnya diubah lewat <code>textContent</code>. Sifatnya seperti variabel:
+                bisa dibaca, bisa ditimpa.</p>
+            <pre>const nama = document.querySelector("#nama");
+
+console.log(nama.textContent);        // membaca  → "Rizky"
+nama.textContent = "Rizky Pratama";   // menimpa</pre>
+            <div class="callout info"><strong>Angka otomatis menjadi teks</strong>Menulis
+                <code>total.textContent = 34;</code> tetap benar. Browser mengubahnya menjadi teks <code>"34"</code>
+                saat ditampilkan.</div>
+            <div class="callout warn"><strong>Kenapa bukan innerHTML?</strong><code>innerHTML</code> memperlakukan
+                isinya sebagai kode HTML, sehingga tag di dalamnya akan dijalankan. Kalau isinya berasal dari ketikan
+                orang lain, itu celah keamanan. Selama teks yang kamu tulis memang teks biasa, <code>textContent</code>
+                selalu pilihan yang benar dan lebih aman.</div>
+
+            <h2 class="sec">Langkah 3 — Mengubah tampilan dengan classList</h2>
+            <p>Warna, garis, dan ukuran sebaiknya tetap diatur di CSS. Tugas JavaScript hanya <strong>memasang dan
+                    melepas kelas</strong>, lalu CSS yang mengurus tampilannya.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Perintah</th>
+                        <th>Fungsinya</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>classList.add("selesai")</code></td>
+                        <td>menambahkan kelas, kelas lain tetap aman</td>
+                    </tr>
+                    <tr>
+                        <td><code>classList.remove("selesai")</code></td>
+                        <td>melepas satu kelas saja</td>
+                    </tr>
+                    <tr>
+                        <td><code>classList.toggle("selesai")</code></td>
+                        <td>ada jadi hilang, hilang jadi ada</td>
+                    </tr>
+                    <tr>
+                        <td><code>classList.contains("selesai")</code></td>
+                        <td>memeriksa, hasilnya <code>true</code> atau <code>false</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout bad"><strong>Jangan pakai className =</strong>Satu elemen bisa punya banyak kelas
+                sekaligus. <code>kartu.className = "selesai"</code> menghapus seluruh daftar kelas dan menyisakan satu —
+                bentuk kartunya ikut rusak. Pakai <code>classList.add</code> supaya yang lain tidak tersentuh.</div>
+
+            <h2 class="sec">Kapan kodemu dijalankan</h2>
+            <p>Ini bagian yang sering membuat kode benar terasa salah. Browser membaca HTML <strong>berurutan dari atas
+                    ke bawah</strong>. Kalau <code>&lt;script&gt;</code> diletakkan di bagian atas, saat kodemu berjalan
+                elemen di bawahnya <em>belum ada</em>. <code>querySelector</code> pun mengembalikan <code>null</code>.
+            </p>
+            <p>Kebiasaan yang menyelesaikan hampir semua kasus ini cuma satu, dan kamu memegang kendalinya:</p>
+            <pre class="plain">&lt;body&gt;
+  ... seluruh isi halaman ...
+
+  &lt;script src="script.js"&gt;&lt;/script&gt;   &lt;!-- letakkan di sini --&gt;
+&lt;/body&gt;</pre>
+            <p>Letakkan <code>&lt;script&gt;</code> sebagai baris terakhir sebelum <code>&lt;/body&gt;</code>. Dengan
+                begitu seluruh elemen sudah dibaca browser sebelum kodemu berjalan.</p>
+            <div class="callout info"><strong>Satu pola yang akan kamu lihat besok</strong>Kadang kamu menemukan kode
+                orang lain yang skripnya terpaksa berada di atas. Cara mereka menundanya seperti
+                ini:<br><br><code>document.addEventListener("DOMContentLoaded", function () { ... })</code><br><br>Artinya
+                sederhana: “jalankan isinya nanti, setelah halaman selesai dibaca”. Belum perlu kamu hafalkan hari ini —
+                cukup kenali bentuknya, karena besok kamu akan bertemu kasus yang membutuhkannya.</div>
+
+            <h2 class="sec">Membaca error di Console</h2>
+            <p>Bug DOM sering tidak menampilkan apa pun di halaman. Console adalah tempat pertama yang harus kamu buka —
+                tekan <strong>F12</strong>, lalu pilih tab <em>Console</em>.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pesan</th>
+                        <th>Artinya</th>
+                        <th>Yang diperiksa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Cannot set properties of null</code></td>
+                        <td>elemennya tidak ditemukan</td>
+                        <td>salah selector, atau skrip berjalan terlalu awal</td>
+                    </tr>
+                    <tr>
+                        <td><code>... is not a function</code></td>
+                        <td>nama perintah salah tulis</td>
+                        <td>huruf besar-kecil, misalnya <code>textcontent</code></td>
+                    </tr>
+                    <tr>
+                        <td>tidak ada error, tapi diam</td>
+                        <td>kodenya sah, nilainya tidak sesuai</td>
+                        <td>cetak nilainya dengan <code>console.log</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="callout info"><strong>Kebiasaan yang menghemat banyak waktu</strong>Sebelum menebak, cetak dulu:
+                <code>console.log(nama)</code>. Kalau yang tercetak <code>null</code>, masalahnya ada di tahap memilih —
+                belum di tahap mengubah.</div>
+        </section>
+
+        <section id="praktikum">
+            <h2 class="sec">Praktikum</h2>
+            <p>Empat latihan di bawah dikerjakan langsung di halaman ini. Tulis kodemu, tekan <strong>Jalankan &amp;
+                    Cek</strong>, lalu amati panel pratinjau. Pemeriksaan berjalan otomatis — tidak perlu screenshot.
+            </p>
+            <div class="callout info"><strong>Cara membaca panel pratinjau</strong>Panel itu adalah halaman sungguhan
+                yang dijalankan terpisah. Kode HTML-nya sudah disiapkan dan tidak perlu kamu ubah. Yang kamu tulis
+                hanyalah JavaScript-nya.</div>
+            <div id="praktikumList"></div>
+        </section>
+
+        <section id="tugas">
+            <h2 class="sec">Tugas</h2>
+            <p>Tiga tugas berikut dinilai. Kerjakan setelah keempat praktikum selesai, dan isi juga kotak penjelasan di
+                bawah setiap tugas — jawabanmu ikut tercetak di laporan.</p>
+            <div id="tugasList"></div>
+        </section>
+
+        <section id="laporan">
+            <h2 class="sec">Pengumpulan</h2>
+            <div class="card">
+                <h3 style="margin-top:0">Identitas peserta</h3>
+                <p class="hint" style="margin-bottom:14px">Diisi sekali, dipakai di halaman pertama laporan.</p>
+                <div class="ident">
+                    <div><label for="nameInput">Nama lengkap</label><input id="nameInput" placeholder="Nama lengkapmu">
+                    </div>
+                    <div><label for="schoolInput">Sekolah / Kelas</label><input id="schoolInput"
+                            placeholder="Contoh: SMK X — XI RPL"></div>
+                    <div><label for="dateInput">Tanggal</label><input id="dateInput" type="date"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-top:0">Refleksi</h3>
+                <div class="label" style="margin-top:14px">1. Menurutmu apa bedanya querySelector dan querySelectorAll?
+                </div>
+                <textarea class="note" id="reflection1" placeholder="Jelaskan dengan kalimatmu sendiri..."></textarea>
+                <div class="label">2. Kesalahan apa yang paling sering kamu alami hari ini, dan bagaimana kamu
+                    menemukannya?</div>
+                <textarea class="note" id="reflection2"
+                    placeholder="Misalnya: lupa tanda pagar, salah huruf besar-kecil..."></textarea>
+                <div class="label">3. Kesimpulan (3–5 kalimat)</div>
+                <textarea class="note" id="conclusion" style="min-height:110px"
+                    placeholder="Tuliskan apa yang kamu pahami tentang memilih dan mengubah elemen halaman."></textarea>
+            </div>
+
+            <div class="card" style="text-align:center">
+                <p style="margin-bottom:14px">Setelah semua terisi, cetak laporanmu menjadi satu berkas PDF lalu
+                    kumpulkan.</p>
+                <button class="btn primary big" id="printButton2">⎙ Cetak / Simpan PDF</button>
+                <p class="hint" style="margin-top:12px">Pada jendela cetak, pilih tujuan <strong>Save as PDF</strong>.
+                </p>
+            </div>
+        </section>
+
+        <footer>Modul DOM 01 — Memilih &amp; Mengubah • Progresmu tersimpan otomatis di browser ini.</footer>
+    </div>
+
+    <div id="printReport"></div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const BASE_CSS = 'body{font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:#2c2c2b;margin:0;padding:18px;background:#fff}h1,h2,h3{margin:0 0 8px}h2{font-size:19px}p{margin:0 0 8px}ul{padding-left:20px;margin:0 0 8px}li{margin:5px 0}strong{font-weight:750}';
+
+        const tasks = [
+            {
+                kind: 'praktikum',
+                title: 'Mengisi kartu profil',
+                target: 'Memilih tiga elemen dengan cara berbeda, lalu mengubah teksnya.',
+                brief: 'Kartu profil di panel pratinjau masih berisi teks bawaan. Isi ketiganya: <code>#nama</code>, <code>.divisi</code>, dan <code>#hari</code>. Baris pertama sudah dicontohkan — lanjutkan dua sisanya.',
+                experiment: 'Setelah berhasil, coba hapus tanda <code>#</code> pada salah satu selector lalu jalankan lagi. Perhatikan pesan error yang muncul — itulah pesan yang akan sering kamu temui.',
+                question: 'Apa yang terjadi ketika tanda # kamu hapus? Tulis pesan errornya.',
+                markup: '<div class="kartu">\n  <h2 id="nama">Nama peserta</h2>\n  <p class="divisi">Divisi</p>\n  <p id="hari">Hari ke-0</p>\n</div>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.kartu{border:1px solid #e6e5e3;border-left:4px solid #2783de;border-radius:9px;padding:16px 18px;max-width:340px}.divisi{color:#6f6d68;margin:0 0 6px}</style></head><body><div class="kartu"><h2 id="nama">Nama peserta</h2><p class="divisi">Divisi</p><p id="hari">Hari ke-0</p></div>{{JS}}</body></html>',
+                starter: 'const nama = document.querySelector("#nama");\nnama.textContent = "Tulis nama lengkapmu di sini";\n\n// Lanjutkan sendiri:\n// 1. pilih .divisi lalu ubah menjadi "Divisi Pengembangan Web"\n// 2. pilih #hari lalu ubah menjadi "Hari ke-1"\n',
+                tests: [
+                    ['Nama sudah diganti dari teks bawaan', c => { const t = c.text('#nama'); return !!t && t !== 'Nama peserta' && t.length > 2 }],
+                    ['Divisi berisi "Divisi Pengembangan Web"', c => c.text('.divisi') === 'Divisi Pengembangan Web'],
+                    ['Hari berisi "Hari ke-1"', c => c.text('#hari') === 'Hari ke-1'],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            },
+            {
+                kind: 'praktikum',
+                title: 'Menandai semua hari sekaligus',
+                target: 'Memilih banyak elemen dengan querySelectorAll, lalu memprosesnya dengan perulangan.',
+                brief: 'Kelima hari pada daftar harus ditandai sebagai sudah dilalui, yaitu dengan menambahkan kelas <code>lewat</code> pada setiap elemen berkelas <code>hari</code>. CSS-nya sudah disiapkan, jadi begitu kelasnya terpasang tampilannya langsung berubah.',
+                experiment: 'Coba dulu tanpa perulangan: <code>semuaHari.classList.add("lewat")</code>. Jalankan, baca errornya, baru perbaiki. Error itu penting untuk kamu kenali.',
+                question: 'Mengapa kumpulan hasil querySelectorAll tidak bisa langsung diberi classList.add?',
+                markup: '<ul id="daftarHari">\n  <li class="hari">Senin</li>\n  <li class="hari">Selasa</li>\n  <li class="hari">Rabu</li>\n  <li class="hari">Kamis</li>\n  <li class="hari">Jumat</li>\n</ul>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.hari{padding:3px 0}.hari.lewat{color:#31875f;text-decoration:line-through}.hari.lewat::after{content:" ✓ sudah dilalui";text-decoration:none;font-size:13px;color:#31875f}</style></head><body><h2>Minggu pertama magang</h2><ul id="daftarHari"><li class="hari">Senin</li><li class="hari">Selasa</li><li class="hari">Rabu</li><li class="hari">Kamis</li><li class="hari">Jumat</li></ul>{{JS}}</body></html>',
+                starter: 'const semuaHari = document.querySelectorAll(".hari");\n\n// Tambahkan kelas "lewat" pada SETIAP hari.\n// Ingat: hasil querySelectorAll berisi banyak elemen,\n// jadi kamu butuh perulangan seperti minggu lalu.\n',
+                tests: [
+                    ['Kelima hari masih utuh di halaman', c => c.all('.hari').length === 5],
+                    ['Setiap hari mendapat kelas "lewat"', c => c.all('.hari').every(el => el.classList.contains('lewat'))],
+                    ['Teks nama hari tidak terhapus', c => c.text('.hari') === 'Senin'],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            },
+            {
+                kind: 'praktikum',
+                title: 'Memasang dan melepas kelas',
+                target: 'Menggunakan classList.add dan classList.remove tanpa merusak kelas lain.',
+                brief: 'Ada tiga kartu tugas. Kerjakan dua hal: tandai kartu <code>#t1</code> sebagai selesai dengan menambahkan kelas <code>selesai</code>, lalu lepas kelas <code>penting</code> dari kartu <code>#t3</code> karena tugasnya sudah tidak mendesak. Kelas <code>kartu</code> pada keduanya tidak boleh sampai hilang.',
+                experiment: 'Coba ganti barismu menjadi <code>t1.className = "selesai"</code> lalu jalankan. Amati bentuk kartunya — lalu kembalikan ke <code>classList.add</code>.',
+                question: 'Apa yang rusak ketika kamu memakai className = "selesai"? Jelaskan sebabnya.',
+                markup: '<div class="kartu" id="t1">Membaca modul DOM</div>\n<div class="kartu" id="t2">Mengerjakan praktikum</div>\n<div class="kartu penting" id="t3">Menyiapkan laporan</div>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.kartu{border:1px solid #e6e5e3;border-radius:9px;padding:12px 15px;margin-bottom:9px;max-width:340px;background:#f9f8f7}.kartu.penting{border-left:4px solid #d5803b;background:#fbebde}.kartu.selesai{border-left:4px solid #31875f;background:#e8f1ec;text-decoration:line-through;color:#31875f}</style></head><body><h2>Daftar tugas hari ini</h2><div class="kartu" id="t1">Membaca modul DOM</div><div class="kartu" id="t2">Mengerjakan praktikum</div><div class="kartu penting" id="t3">Menyiapkan laporan</div>{{JS}}</body></html>',
+                starter: 'const t1 = document.querySelector("#t1");\nconst t3 = document.querySelector("#t3");\n\n// 1. tandai t1 sebagai selesai\n// 2. lepas kelas "penting" dari t3\n',
+                tests: [
+                    ['Kartu #t1 mendapat kelas "selesai"', c => c.has('#t1', 'selesai')],
+                    ['Kartu #t1 tetap punya kelas "kartu"', c => c.has('#t1', 'kartu')],
+                    ['Kelas "penting" sudah lepas dari #t3', c => !c.has('#t3', 'penting')],
+                    ['Kartu #t3 tetap punya kelas "kartu"', c => c.has('#t3', 'kartu')],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            },
+            {
+                kind: 'praktikum',
+                title: 'Papan progres magang',
+                target: 'Menggabungkan perulangan, perhitungan, dan penulisan hasil ke halaman.',
+                brief: 'Data jam kerja lima hari sudah tersedia sebagai array. Hitung totalnya dengan perulangan, lalu tulis hasilnya ke <code>#totalJam</code> dan jumlah harinya ke <code>#jumlahHari</code>. Ini persis latihan “menghitung total jam” dari modul perulangan — bedanya hasilnya sekarang tampil di halaman, bukan di Console.',
+                experiment: 'Ubah satu angka di dalam array lalu jalankan lagi. Perhatikan bahwa kamu tidak menyentuh HTML sama sekali, tetapi halamannya berubah. Itulah inti DOM.',
+                question: 'Mengapa angka di halaman bisa berubah padahal HTML-nya tidak kamu ubah?',
+                markup: '<div class="papan">\n  <p>Total jam: <strong id="totalJam">0</strong></p>\n  <p>Hari tercatat: <strong id="jumlahHari">0</strong></p>\n</div>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.papan{border:1px solid #e6e5e3;border-radius:9px;padding:16px 18px;max-width:340px;background:#f9f8f7}.papan strong{font-size:21px;color:#2783de}</style></head><body><h2>Papan progres magang</h2><div class="papan"><p>Total jam: <strong id="totalJam">0</strong></p><p>Hari tercatat: <strong id="jumlahHari">0</strong></p></div>{{JS}}</body></html>',
+                starter: 'const jamPerHari = [8, 8, 6, 8, 4];\n\n// 1. hitung total jam dengan perulangan\n// 2. tulis total itu ke #totalJam\n// 3. tulis jumlah hari ke #jumlahHari\n',
+                tests: [
+                    ['Total jam menampilkan 34', c => c.text('#totalJam') === '34'],
+                    ['Jumlah hari menampilkan 5', c => c.text('#jumlahHari') === '5'],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            },
+            {
+                kind: 'tugas',
+                title: 'Kartu identitas peserta',
+                target: 'Mengisi lima elemen yang dipilih dengan cara berbeda-beda.',
+                brief: 'Lengkapi kartu identitas dengan datamu sendiri. Ada lima bagian yang harus terisi: <code>#namaLengkap</code>, <code>.sekolah</code>, <code>.jurusan</code>, <code>#asal</code>, dan <code>#minat</code>. Perhatikan mana yang id dan mana yang class. Semua teks bawaan harus tergantikan.',
+                question: 'Tuliskan selector yang kamu pakai untuk kelima elemen tersebut.',
+                markup: '<div class="kartu">\n  <h2 id="namaLengkap">Nama lengkap</h2>\n  <p class="sekolah">Sekolah</p>\n  <p class="jurusan">Jurusan</p>\n  <p id="asal">Kota asal</p>\n  <p id="minat">Minat</p>\n</div>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.kartu{border:1px solid #e6e5e3;border-left:4px solid #2783de;border-radius:9px;padding:16px 18px;max-width:360px}.kartu p{color:#6f6d68;margin:0 0 5px}</style></head><body><div class="kartu"><h2 id="namaLengkap">Nama lengkap</h2><p class="sekolah">Sekolah</p><p class="jurusan">Jurusan</p><p id="asal">Kota asal</p><p id="minat">Minat</p></div>{{JS}}</body></html>',
+                starter: '// Isi kelima bagian kartu dengan datamu sendiri.\n// Gunakan querySelector dan textContent.\n',
+                tests: [
+                    ['Nama lengkap sudah terisi', c => { const t = c.text('#namaLengkap'); return !!t && t !== 'Nama lengkap' && t.length > 2 }],
+                    ['Sekolah sudah terisi', c => { const t = c.text('.sekolah'); return !!t && t !== 'Sekolah' && t.length > 2 }],
+                    ['Jurusan sudah terisi', c => { const t = c.text('.jurusan'); return !!t && t !== 'Jurusan' && t.length > 2 }],
+                    ['Kota asal sudah terisi', c => { const t = c.text('#asal'); return !!t && t !== 'Kota asal' && t.length > 2 }],
+                    ['Minat sudah terisi', c => { const t = c.text('#minat'); return !!t && t !== 'Minat' && t.length > 2 }],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            },
+            {
+                kind: 'tugas',
+                title: 'Menandai akhir pekan',
+                target: 'Membaca teks sebuah elemen, lalu memutuskan.',
+                brief: 'Di halaman ada tujuh hari dalam satu minggu. Tandai hari <strong>Sabtu</strong> dan <strong>Minggu</strong> dengan menambahkan kelas <code>libur</code>, lalu tulis jumlah hari kerja ke <code>#jumlahKerja</code>. Petunjuk: teks sebuah elemen bisa <em>dibaca</em>, bukan cuma ditulis — jadi kodemu boleh bertanya <code>if (hari.textContent === "Sabtu")</code>.',
+                question: 'Bagaimana caranya kodemu tahu bahwa sebuah elemen adalah hari Sabtu?',
+                markup: '<ul id="rekap">\n  <li class="hari">Senin</li>\n  <li class="hari">Selasa</li>\n  <li class="hari">Rabu</li>\n  <li class="hari">Kamis</li>\n  <li class="hari">Jumat</li>\n  <li class="hari">Sabtu</li>\n  <li class="hari">Minggu</li>\n</ul>\n<p>Hari kerja: <strong id="jumlahKerja">0</strong></p>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.hari{padding:3px 0}.hari.libur{color:#d44f45}.hari.libur::after{content:" — libur";font-size:13px}#sisa{margin-top:10px}strong{font-size:19px;color:#2783de}</style></head><body><h2>Rekap kehadiran</h2><ul id="rekap"><li class="hari">Senin</li><li class="hari">Selasa</li><li class="hari">Rabu</li><li class="hari">Kamis</li><li class="hari">Jumat</li><li class="hari">Sabtu</li><li class="hari">Minggu</li></ul><p id="sisa">Hari kerja: <strong id="jumlahKerja">0</strong></p>{{JS}}</body></html>',
+                starter: 'const semuaHari = document.querySelectorAll(".hari");\nlet kerja = 0;\n\nsemuaHari.forEach(function (hari) {\n  // 1. kalau teksnya "Sabtu" atau "Minggu", tambahkan kelas "libur"\n  // 2. kalau bukan, tambahkan 1 ke kerja\n});\n\n// 3. tulis jumlah hari kerja ke #jumlahKerja\n',
+                tests: [
+                    ['Tepat dua hari ditandai libur', c => c.all('.hari.libur').length === 2],
+                    ['Sabtu ditandai libur', c => c.all('.hari')[5].classList.contains('libur')],
+                    ['Minggu ditandai libur', c => c.all('.hari')[6].classList.contains('libur')],
+                    ['Senin tidak ditandai libur', c => !c.all('.hari')[0].classList.contains('libur')],
+                    ['Jumlah hari kerja menampilkan 5', c => c.text('#jumlahKerja') === '5'],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            },
+            {
+                kind: 'tugas',
+                title: 'Papan status tugas',
+                target: 'Memeriksa kelas yang sudah ada, lalu menghitung.',
+                brief: 'Lima kartu tugas. Kartu yang sudah dikerjakan <strong>sudah diberi kelas <code>sudah</code></strong> di HTML-nya — buka struktur HTML di bawah untuk melihat yang mana. Untuk setiap kartu: kalau ia punya kelas <code>sudah</code>, tambahkan kelas <code>selesai</code> dan hitung. Lalu tulis jumlah selesai ke <code>#jumlahSelesai</code>, jumlah yang belum ke <code>#jumlahBelum</code>, dan ubah <code>#judul</code> menjadi <code>Papan Tugas — 3 dari 5 selesai</code> dengan angka hasil hitunganmu, bukan ditulis manual. Petunjuk: <code>kartu.classList.contains("sudah")</code> menjawab true atau false.',
+                question: 'Kenapa jumlah yang belum selesai lebih baik dihitung dari total dikurangi selesai, daripada langsung ditulis angka 2?',
+                markup: '<h2 id="judul">Papan Tugas</h2>\n<div class="kartu sudah">Membaca modul</div>\n<div class="kartu sudah">Mengerjakan praktikum 1</div>\n<div class="kartu sudah">Mengerjakan praktikum 2</div>\n<div class="kartu">Menulis refleksi</div>\n<div class="kartu">Mengumpulkan laporan</div>\n<p>Selesai: <strong id="jumlahSelesai">0</strong></p>\n<p>Belum: <strong id="jumlahBelum">0</strong></p>',
+                html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '.kartu{border:1px solid #e6e5e3;border-radius:9px;padding:10px 14px;margin-bottom:7px;max-width:340px;background:#f9f8f7}.kartu.selesai{border-left:4px solid #31875f;background:#e8f1ec;color:#31875f;text-decoration:line-through}.hitung{margin-top:12px}strong{font-size:19px;color:#2783de}</style></head><body><h2 id="judul">Papan Tugas</h2><div class="kartu sudah">Membaca modul</div><div class="kartu sudah">Mengerjakan praktikum 1</div><div class="kartu sudah">Mengerjakan praktikum 2</div><div class="kartu">Menulis refleksi</div><div class="kartu">Mengumpulkan laporan</div><div class="hitung"><p>Selesai: <strong id="jumlahSelesai">0</strong></p><p>Belum: <strong id="jumlahBelum">0</strong></p></div>{{JS}}</body></html>',
+                starter: 'const semuaKartu = document.querySelectorAll(".kartu");\nlet selesai = 0;\n\nsemuaKartu.forEach(function (kartu) {\n  // kalau kartu punya kelas "sudah":\n  //   tambahkan kelas "selesai", lalu tambahkan 1 ke selesai\n});\n\nconst belum = semuaKartu.length - selesai;\n\n// tulis selesai, belum, dan judul ke halaman\n',
+                tests: [
+                    ['Tiga kartu ditandai selesai', c => c.all('.kartu.selesai').length === 3],
+                    ['Kartu keempat tidak ditandai selesai', c => !c.all('.kartu')[3].classList.contains('selesai')],
+                    ['Jumlah selesai menampilkan 3', c => c.text('#jumlahSelesai') === '3'],
+                    ['Jumlah belum menampilkan 2', c => c.text('#jumlahBelum') === '2'],
+                    ['Judul memuat "3 dari 5 selesai"', c => { const t = c.text('#judul') || ''; return t.includes('3 dari 5') && t.toLowerCase().includes('selesai') }],
+                    ['Halaman berjalan tanpa error', c => !c.err()]
+                ]
+            }
+        ];
+
+        const KEY = 'domModul01MemilihMengubahV1';
+        let busy = false;
+        let state = { identity: {}, answers: tasks.map(t => t.starter), notes: tasks.map(() => ''), done: tasks.map(() => false), results: tasks.map(() => null), reflection1: '', reflection2: '', conclusion: '' };
+        const $ = id => document.getElementById(id);
+        function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
+
+        function save() { try { localStorage.setItem(KEY, JSON.stringify(state)) } catch (e) { } }
+
+        function load() {
+            try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved) { state = { ...state, ...saved }; state.answers = tasks.map((t, i) => saved.answers?.[i] ?? t.starter); state.notes = tasks.map((_, i) => saved.notes?.[i] ?? ''); state.done = tasks.map((_, i) => !!saved.done?.[i]); state.results = tasks.map((_, i) => saved.results?.[i] ?? null) } } catch (e) { }
+            const d = new Date();
+            $('nameInput').value = state.identity.name || '';
+            $('schoolInput').value = state.identity.school || '';
+            $('dateInput').value = state.identity.date || `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            $('reflection1').value = state.reflection1 || '';
+            $('reflection2').value = state.reflection2 || '';
+            $('conclusion').value = state.conclusion || '';
+            buildCards();
+            renderProgress();
+            tasks.forEach((t, i) => { runPreview(i, t, state.answers[i]); renderResult(i) });
+        }
+
+        function cardHtml(t, i) {
+            const isTugas = t.kind === 'tugas';
+            const num = isTugas ? i - 3 : i + 1;
+            const label = isTugas ? `Tugas ${num}` : `Praktikum ${num}`;
+            return `<article class="ex" id="ex-${i}">
+    <div class="ex-head">
+      <div class="ex-meta"><span class="badge ${isTugas ? 'task' : ''}">${label}</span><span class="badge ok" id="dot-${i}" style="display:none">✓ selesai</span></div>
+      <h3>${esc(t.title)}</h3>
+      <p class="target">${esc(t.target)}</p>
+    </div>
+    <div class="ex-body">
+      <p>${t.brief}</p>
+      <details><summary>Struktur HTML halaman (tidak perlu diubah)</summary><pre class="plain" id="ref-${i}"></pre></details>
+      <div class="label">Kode JavaScript<span class="btns"><button class="btn" id="reset-${i}">Reset</button><button class="btn" id="run-${i}">▶ Jalankan saja</button></span></div>
+      <textarea class="editor" id="ed-${i}" spellcheck="false"></textarea>
+      <div class="label">Pratinjau halaman</div>
+      <div class="frame-wrap" id="pw-${i}"></div>
+      <p class="hint">Panel di atas adalah halaman sungguhan. Perubahan dari kodemu langsung terlihat di sini.</p>
+      <div class="result" id="rs-${i}"></div>
+      <div style="margin-top:16px"><button class="btn primary big" id="check-${i}">Jalankan &amp; Cek</button></div>
+      ${t.experiment ? `<div class="callout info" style="margin-top:18px"><strong>Eksperimen</strong>${t.experiment}</div>` : ''}
+      ${t.question ? `<div class="label">Pertanyaan</div><p class="hint" style="margin:-2px 0 7px">${esc(t.question)}</p><textarea class="note" id="nt-${i}" placeholder="Jawabanmu ikut tercetak di laporan..."></textarea>` : ''}
+    </div>
+  </article>`;
+        }
+
+        function buildCards() {
+            $('praktikumList').innerHTML = tasks.map((t, i) => t.kind === 'praktikum' ? cardHtml(t, i) : '').join('');
+            $('tugasList').innerHTML = tasks.map((t, i) => t.kind === 'tugas' ? cardHtml(t, i) : '').join('');
+            tasks.forEach((t, i) => {
+                $('ref-' + i).textContent = t.markup;
+                $('ed-' + i).value = state.answers[i];
+                if (t.question) $('nt-' + i).value = state.notes[i] || '';
+                $('ed-' + i).addEventListener('input', () => { state.answers[i] = $('ed-' + i).value; save() });
+                $('ed-' + i).addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); const el = e.target, s = el.selectionStart, n = el.selectionEnd; el.value = el.value.slice(0, s) + '  ' + el.value.slice(n); el.selectionStart = el.selectionEnd = s + 2; state.answers[i] = el.value; save() } });
+                if (t.question) $('nt-' + i).addEventListener('input', () => { state.notes[i] = $('nt-' + i).value; save() });
+                $('reset-' + i).onclick = () => { if (confirm('Kembalikan kode latihan ini ke kondisi awal?')) { state.answers[i] = t.starter; state.done[i] = false; state.results[i] = null; $('ed-' + i).value = t.starter; save(); renderProgress(); renderResult(i); runPreview(i, t, t.starter) } };
+                $('run-' + i).onclick = () => check(i, true);
+                $('check-' + i).onclick = () => check(i, false);
+            });
+        }
+
+        function buildDoc(t, code) {
+            const bridge = '<script>window.__logs=[];window.__err=null;(function(){var _l=console.log;console.log=function(){try{window.__logs.push(Array.prototype.slice.call(arguments).map(function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" "))}catch(e){}try{_l.apply(console,arguments)}catch(e){}}})();window.addEventListener("error",function(e){if(!window.__err)window.__err=e.message});<\/script>';
+            const userScript = '<script>try{\n' + code + '\n}catch(e){window.__err=e.message}<\/script>';
+            return t.html.replace('{{JS}}', bridge + userScript);
+        }
+        function runPreview(i, t, code) {
+            return new Promise(resolve => {
+                const wrap = $('pw-' + i); wrap.innerHTML = '';
+                const f = document.createElement('iframe');
+                f.setAttribute('title', 'Pratinjau halaman');
+                const fit = () => { try { const b = f.contentDocument.body; const hh = Math.max(b.scrollHeight, Math.ceil(b.getBoundingClientRect().bottom)); f.style.height = Math.min(560, Math.max(170, hh + 22)) + 'px' } catch (e) { } };
+                f.addEventListener('load', () => { fit(); setTimeout(fit, 90); resolve(f) }, { once: true });
+                wrap.appendChild(f);
+                f.srcdoc = buildDoc(t, code);
+            });
+        }
+        function makeCtx(frame) {
+            const f = frame;
+            const doc = () => f.contentDocument;
+            return {
+                q: sel => doc().querySelector(sel),
+                all: sel => Array.from(doc().querySelectorAll(sel)),
+                text: sel => { const el = doc().querySelector(sel); return el ? el.textContent.trim() : null },
+                has: (sel, cls) => { const el = doc().querySelector(sel); return !!el && el.classList.contains(cls) },
+                wait: ms => new Promise(r => setTimeout(r, ms || 60)),
+                err() { try { return f.contentWindow.__err || null } catch (e) { return null } },
+                logs() { try { return (f.contentWindow.__logs || []).slice() } catch (e) { return [] } }
+            };
+        }
+        async function check(i, onlyRun) {
+            if (busy) return; busy = true;
+            const btn = $('check-' + i); const label = btn.textContent;
+            btn.disabled = true; $('run-' + i).disabled = true; btn.textContent = 'Menguji…';
+            try {
+                state.answers[i] = $('ed-' + i).value;
+                const t = tasks[i]; const code = state.answers[i];
+                const f = await runPreview(i, t, code);
+                const ctx = makeCtx(f);
+                await ctx.wait(120);
+                if (onlyRun) {
+                    state.results[i] = { only: true, error: ctx.err(), logs: ctx.logs() };
+                    save(); renderResult(i); return;
+                }
+                const rows = [];
+                for (const [name, fn] of t.tests) { let pass = false; try { pass = !!await fn(ctx) } catch (e) { pass = false } rows.push({ name, pass }) }
+                const passed = rows.every(x => x.pass);
+                state.done[i] = passed;
+                state.results[i] = { passed, rows, error: ctx.err(), logs: ctx.logs() };
+                save(); renderProgress(); renderResult(i);
+                toast(passed ? (t.kind === 'tugas' ? 'Tugas selesai!' : 'Praktikum selesai!') : 'Belum sesuai — baca hasil pengujian di bawah.');
+            } finally {
+                busy = false; btn.disabled = false; $('run-' + i).disabled = false; btn.textContent = label;
+            }
+        }
+        function renderResult(i) {
+            const res = state.results[i]; const box = $('rs-' + i); const dot = $('dot-' + i);
+            if (dot) dot.style.display = state.done[i] ? 'inline-block' : 'none';
+            if (!box) return;
+            if (!res) { box.className = 'result'; box.innerHTML = ''; return }
+            const consoleText = res.logs && res.logs.length ? res.logs.join('\n') : 'Tidak ada output console.log().';
+            if (res.only) {
+                box.className = `result show ${res.error ? 'fail' : 'pass'}`;
+                box.innerHTML = `<h4>${res.error ? 'Halaman memunculkan error' : 'Kode berhasil dijalankan'}</h4>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : '<div class="test-row"><span>Amati hasilnya pada panel pratinjau di atas.</span></div>'}<div class="console">${esc(consoleText)}</div>`;
+                return;
+            }
+            box.className = `result show ${res.passed ? 'pass' : 'fail'}`;
+            box.innerHTML = `<h4>${res.passed ? '✓ Semua pengujian berhasil' : 'Periksa kembali kodemu'}</h4>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : ''}${(res.rows || []).map(x => `<div class="test-row"><span class="test-icon">${x.pass ? '✓' : '×'}</span><span>${esc(x.name)}</span></div>`).join('')}<div class="console">${esc(consoleText)}</div>`;
+        }
+        function renderProgress() { const n = state.done.filter(Boolean).length; $('progressText').textContent = `${n} / ${tasks.length} selesai`; $('progressBar').style.width = `${n / tasks.length * 100}%` }
+        function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); setTimeout(() => $('toast').classList.remove('show'), 1800) }
+
+        function syncIdentity() { state.identity = { name: $('nameInput').value.trim(), school: $('schoolInput').value.trim(), date: $('dateInput').value }; save() }
+
+        function buildPrint() {
+            ['reflection1', 'reflection2', 'conclusion'].forEach(id => { state[id] = $(id).value });
+            syncIdentity();
+            const i = state.identity; const n = state.done.filter(Boolean).length; const score = Math.round(n / tasks.length * 100);
+            $('printReport').innerHTML = `<div class="print-cover"><h1>Modul DOM 01 — Memilih &amp; Mengubah Halaman</h1><p>Laporan praktikum dan tugas • Peserta Magang/PKL SMK RPL</p><div class="print-meta"><div><strong>Nama:</strong> ${esc(i.name || 'Belum diisi')}</div><div><strong>Tanggal:</strong> ${esc(i.date || '-')}</div><div><strong>Sekolah/Kelas:</strong> ${esc(i.school || '-')}</div><div><strong>Skor:</strong> ${score}/100 (${n} dari ${tasks.length} latihan)</div></div></div>` +
+                tasks.map((t, k) => {
+                    const isTugas = t.kind === 'tugas'; const num = isTugas ? k - 3 : k + 1;
+                    return `<div class="print-section"><h2>${isTugas ? 'Tugas' : 'Praktikum'} ${num} — ${esc(t.title)}</h2><h3 class="print-status ${state.done[k] ? 'print-pass' : 'print-fail'}">${state.done[k] ? '✓ Lulus pengujian' : '× Belum lulus pengujian'}</h3><h3>Kode JavaScript</h3><div class="print-code">${esc(state.answers[k])}</div>${t.question ? `<h3>${esc(t.question)}</h3><div class="print-reflection">${esc(state.notes[k] || 'Belum diisi')}</div>` : ''}</div>`;
+                }).join('') +
+                `<div class="print-section"><h2>Refleksi</h2><h3>Beda querySelector dan querySelectorAll</h3><div class="print-reflection">${esc(state.reflection1 || 'Belum diisi')}</div><h3>Kesalahan yang paling sering dialami</h3><div class="print-reflection">${esc(state.reflection2 || 'Belum diisi')}</div><h3>Kesimpulan</h3><div class="print-reflection">${esc(state.conclusion || 'Belum diisi')}</div></div>`;
+        }
+
+        ['nameInput', 'schoolInput', 'dateInput'].forEach(id => $(id).addEventListener('input', syncIdentity));
+        ['reflection1', 'reflection2', 'conclusion'].forEach(id => $(id).addEventListener('input', () => { state[id] = $(id).value; save() }));
+        $('printButton').onclick = () => { buildPrint(); window.print() };
+        $('printButton2').onclick = () => { buildPrint(); window.print() };
+        window.addEventListener('beforeprint', buildPrint);
+        load();
+    </script>
+</body>
+
+</html>

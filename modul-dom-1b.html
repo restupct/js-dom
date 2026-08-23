@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Modul DOM 1b — Form, Atribut & Elemen Baru</title>
+  <style>
+    :root {
+      --ink: #2c2c2b;
+      --muted: #6f6d68;
+      --canvas: #fff;
+      --soft: #f9f8f7;
+      --surface: #f0efed;
+      --line: #e6e5e3;
+      --blue: #2783de;
+      --blue-soft: #e5f2fc;
+      --green: #31875f;
+      --green-soft: #e8f1ec;
+      --orange: #b76a2d;
+      --orange-soft: #fbebde;
+      --red: #d44f45;
+      --red-soft: #fce9e7;
+      --code: #202124;
+      --radius: 10px
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .topbar-in {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 13px;
+      flex: none
+    }
+
+    .brand {
+      font-weight: 750;
+      font-size: 15px;
+      line-height: 1.25
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 12.5px
+    }
+
+    .top-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .prog {
+      display: flex;
+      align-items: center;
+      gap: 9px
+    }
+
+    .prog-text {
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-weight: 650
+    }
+
+    .prog-track {
+      width: 110px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--surface);
+      overflow: hidden
+    }
+
+    .prog-bar {
+      height: 100%;
+      width: 0;
+      background: var(--green);
+      border-radius: 99px;
+      transition: width .3s
+    }
+
+    .subnav {
+      position: sticky;
+      top: 59px;
+      z-index: 29;
+      background: var(--soft);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .subnav-in {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto
+    }
+
+    .subnav a {
+      padding: 11px 13px;
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap
+    }
+
+    .subnav a:hover {
+      color: var(--ink)
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 72px
+    }
+
+    section {
+      scroll-margin-top: 112px
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    h1 {
+      font-size: 32px;
+      line-height: 1.14;
+      letter-spacing: -.02em;
+      margin: 7px 0 10px
+    }
+
+    h2.sec {
+      font-size: 24px;
+      letter-spacing: -.01em;
+      margin: 44px 0 14px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    h3 {
+      font-size: 17.5px;
+      margin: 26px 0 8px
+    }
+
+    h4 {
+      font-size: 15px;
+      margin: 18px 0 6px
+    }
+
+    p {
+      margin: 0 0 12px
+    }
+
+    .lede {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 620px
+    }
+
+    .card {
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin: 0 0 18px
+    }
+
+    .goal {
+      background: var(--blue-soft);
+      border: 1px solid #cbe4f8;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 22px 0 8px
+    }
+
+    .goal h3 {
+      margin: 0 0 8px;
+      font-size: 16px
+    }
+
+    .goal ol {
+      margin: 0;
+      padding-left: 20px
+    }
+
+    .goal li {
+      margin: 6px 0
+    }
+
+    code {
+      background: var(--surface);
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .9em
+    }
+
+    pre {
+      margin: 0 0 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--code);
+      color: #e8eaed;
+      overflow-x: auto;
+      font: 13.5px/1.6 Consolas, "Courier New", monospace
+    }
+
+    pre.plain {
+      background: var(--surface);
+      color: var(--ink)
+    }
+
+    pre.tree {
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.75
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      margin: 0 0 14px
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top
+    }
+
+    th {
+      font-size: 12px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0
+    }
+
+    .callout {
+      border-radius: 9px;
+      padding: 14px 16px;
+      margin: 0 0 14px;
+      font-size: 15px;
+      border: 1px solid
+    }
+
+    .callout.info {
+      background: var(--blue-soft);
+      border-color: #cbe4f8
+    }
+
+    .callout.warn {
+      background: var(--orange-soft);
+      border-color: #f0d4bb
+    }
+
+    .callout.bad {
+      background: var(--red-soft);
+      border-color: #efc4c0
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 3px
+    }
+
+    ul.tight {
+      margin: 0 0 12px;
+      padding-left: 22px
+    }
+
+    ul.tight li {
+      margin: 5px 0
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px
+    }
+
+    .compare>div {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 14px 16px
+    }
+
+    .compare h4 {
+      margin: 0 0 7px;
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    .compare p {
+      margin: 0;
+      font-size: 14.5px
+    }
+
+    .ex {
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin: 0 0 22px;
+      overflow: hidden
+    }
+
+    .ex-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft)
+    }
+
+    .ex-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 7px;
+      flex-wrap: wrap
+    }
+
+    .badge {
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 750;
+      background: var(--blue-soft);
+      color: #155f9f
+    }
+
+    .badge.task {
+      background: var(--orange-soft);
+      color: #85501f
+    }
+
+    .badge.ok {
+      background: var(--green-soft);
+      color: #1f6644
+    }
+
+    .ex-head h3 {
+      margin: 0 0 4px;
+      font-size: 19px
+    }
+
+    .ex-head .target {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14.5px
+    }
+
+    .ex-body {
+      padding: 20px 22px
+    }
+
+    .ex-body>p:first-child {
+      margin-top: 0
+    }
+
+    details {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 14px;
+      margin: 0 0 14px
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 14.5px
+    }
+
+    details pre {
+      margin: 12px 0 2px
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 16px 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .label .btns {
+      margin-left: auto;
+      display: flex;
+      gap: 7px
+    }
+
+    textarea.editor {
+      width: 100%;
+      min-height: 190px;
+      background: var(--code);
+      color: #e8eaed;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font: 13.5px/1.7 Consolas, "Courier New", monospace;
+      resize: vertical;
+      tab-size: 2
+    }
+
+    textarea.editor:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .4);
+      outline-offset: 1px
+    }
+
+    textarea.note {
+      width: 100%;
+      min-height: 76px;
+      background: var(--canvas);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 13px;
+      font: 15px/1.6 inherit;
+      resize: vertical
+    }
+
+    textarea.note:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 1px
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--canvas);
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 38px;
+      padding: 8px 13px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: var(--surface)
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 2px
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff
+    }
+
+    .btn.primary:hover {
+      background: #1f6fc0
+    }
+
+    .btn.big {
+      min-height: 44px;
+      padding: 11px 20px;
+      font-size: 15px
+    }
+
+    .frame-wrap {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+      background: var(--canvas);
+      min-height: 150px
+    }
+
+    .frame-wrap iframe {
+      width: 100%;
+      height: 230px;
+      border: 0;
+      display: block;
+      background: #fff
+    }
+
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 6px 0 0
+    }
+
+    .result {
+      display: none;
+      margin-top: 14px;
+      border-radius: 9px;
+      padding: 14px 16px;
+      border: 1px solid
+    }
+
+    .result.show {
+      display: block
+    }
+
+    .result.pass {
+      background: var(--green-soft);
+      border-color: #bddbc9
+    }
+
+    .result.fail {
+      background: var(--red-soft);
+      border-color: #efc4c0
+    }
+
+    .result h4 {
+      margin: 0 0 8px;
+      font-size: 15px
+    }
+
+    .test-row {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      font-size: 14.5px;
+      margin: 4px 0
+    }
+
+    .test-icon {
+      font-weight: 800;
+      width: 15px;
+      flex: none
+    }
+
+    .console {
+      margin-top: 10px;
+      background: var(--code);
+      color: #e8eaed;
+      border-radius: 7px;
+      padding: 10px 13px;
+      font: 12.5px/1.6 Consolas, "Courier New", monospace;
+      white-space: pre-wrap;
+      max-height: 150px;
+      overflow: auto
+    }
+
+    .ident {
+      display: grid;
+      grid-template-columns: 1fr 1fr 170px;
+      gap: 12px
+    }
+
+    .ident label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px
+    }
+
+    .ident input {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: var(--canvas)
+    }
+
+    .ident input:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 1px
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(14px);
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 9px;
+      font-size: 14.5px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 50
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%)
+    }
+
+    #printReport {
+      display: none
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 13.5px;
+      text-align: center;
+      margin-top: 40px
+    }
+
+    @media(max-width:760px) {
+      .compare {
+        grid-template-columns: 1fr
+      }
+
+      .ident {
+        grid-template-columns: 1fr
+      }
+
+      .topbar-in,
+      .subnav-in,
+      .wrap {
+        padding-left: 16px;
+        padding-right: 16px
+      }
+
+      h1 {
+        font-size: 26px
+      }
+
+      .prog-track {
+        width: 70px
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 14mm
+      }
+
+      body {
+        background: #fff;
+        font-size: 10.5pt
+      }
+
+      .topbar,
+      .subnav,
+      .wrap,
+      .toast {
+        display: none !important
+      }
+
+      #printReport {
+        display: block
+      }
+
+      .print-cover {
+        border-bottom: 2px solid #2c2c2b;
+        padding-bottom: 12px;
+        margin-bottom: 16px
+      }
+
+      .print-cover h1 {
+        font-size: 19pt;
+        margin: 0 0 4px
+      }
+
+      .print-cover p {
+        color: #555;
+        margin: 0
+      }
+
+      .print-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px 20px;
+        margin-top: 12px;
+        font-size: 10pt
+      }
+
+      .print-section {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 12px 14px;
+        margin-bottom: 12px
+      }
+
+      .print-section h2 {
+        font-size: 12.5pt;
+        margin: 0 0 6px
+      }
+
+      .print-section h3 {
+        font-size: 9.5pt;
+        margin: 10px 0 4px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #555
+      }
+
+      .print-code {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 10px;
+        font: 8.6pt/1.5 Consolas, monospace;
+        white-space: pre-wrap
+      }
+
+      .print-reflection {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 10px;
+        min-height: 34px;
+        font-size: 10pt
+      }
+
+      .print-status {
+        font-weight: 800
+      }
+
+      .print-pass {
+        color: #1f6644
+      }
+
+      .print-fail {
+        color: #a5352c
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="logo">DOM</div>
+      <div class="brand">Modul DOM 1b<small>Form, Atribut &amp; Elemen Baru • Persiapan Event Listener</small></div>
+      <div class="top-right">
+        <div class="prog">
+          <span class="prog-text" id="progressText">0 / 5 selesai</span>
+          <div class="prog-track">
+            <div class="prog-bar" id="progressBar"></div>
+          </div>
+        </div>
+        <button class="btn" id="printButton">⎙ Cetak / Simpan PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="subnav">
+    <div class="subnav-in">
+      <a href="#materi">Materi</a>
+      <a href="#praktikum">Praktikum</a>
+      <a href="#tugas">Tugas</a>
+      <a href="#laporan">Pengumpulan</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+
+    <section id="materi">
+      <div class="eyebrow">Manipulasi Lanjut • Hari 2 dari 4</div>
+      <h1>Persiapan membuat halaman interaktif.</h1>
+      <p class="lede">Sebelum membuat tombol yang bisa diklik, kamu harus tahu cara mengambil data dari pengguna,
+        mengubah bentuk elemen (seperti gambar), dan memunculkan elemen baru ke halaman secara dinamis.</p>
+
+      <div class="goal">
+        <h3>Tujuan pembelajaran</h3>
+        <ol>
+          <li>Mengambil isian dari input form menggunakan <code>value</code> (bukan <code>textContent</code>).</li>
+          <li>Memanipulasi atribut elemen, seperti mengubah gambar (<code>src</code>) dan menonaktifkan tombol
+            (<code>disabled</code>).</li>
+          <li>Membuat elemen HTML baru dengan <code>document.createElement</code> dan <code>append</code>.</li>
+          <li>Membuang elemen dari halaman menggunakan <code>remove</code>.</li>
+        </ol>
+      </div>
+
+      <h2 class="sec">1. Form itu berbeda: Gunakan .value</h2>
+      <p>Pada Modul 1, kamu mengubah tulisan dengan <code>textContent</code>. Namun, untuk elemen form (seperti
+        <code>&lt;input&gt;</code> atau <code>&lt;textarea&gt;</code>), teks yang diketik pengguna tidak disimpan di
+        <code>textContent</code>, melainkan di <code>value</code>.
+      </p>
+      <pre>const inputNama = document.querySelector("#nama");
+
+// Membaca apa yang diketik pengguna
+console.log(inputNama.value);
+
+// Mengosongkan form kembali setelah data diambil
+inputNama.value = "";</pre>
+      <div class="callout warn"><strong>Ingat Aturan Ini!</strong>Tag pembungkus seperti <code>&lt;p&gt;</code>,
+        <code>&lt;h1&gt;</code>, <code>&lt;div&gt;</code> menggunakan <code>textContent</code>. Tag form tunggal seperti
+        <code>&lt;input&gt;</code> menggunakan <code>value</code>.
+      </div>
+
+      <h2 class="sec">2. Mengubah Atribut (src, href, disabled)</h2>
+      <p>Kamu tidak hanya bisa mengubah kelas (CSS) dan teks. Bagian-bagian dari tag (atribut) juga bisa dikendalikan
+        oleh JavaScript. Ini sangat berguna untuk membuat fitur dinamis.</p>
+      <pre>const foto = document.querySelector("#profilImg");
+const tombol = document.querySelector("#btnKirim");
+
+// Mengganti gambar
+foto.src = "gambar-baru.jpg";
+
+// Menonaktifkan tombol (agar tidak bisa diklik)
+tombol.disabled = true;</pre>
+
+      <h2 class="sec">3. Tiga Langkah Membuat Elemen Baru</h2>
+      <p>Bagaimana jika datanya belum ada di HTML? Misalnya kamu ingin membuat "To-Do List" di mana itemnya bertambah
+        terus. Kamu harus merakit elemennya secara manual. Selalu ada 3 langkah:</p>
+      <pre>// 1. BUAT BENTUKNYA (Tag HTML-nya apa?)
+const elemenBaru = document.createElement("li");
+
+// 2. DANDANI ISINYA (Teks atau kelasnya apa?)
+elemenBaru.textContent = "Belajar Event Listener";
+elemenBaru.classList.add("tugas-penting");
+
+// 3. TARUH DI HALAMAN (Mau dimasukkan ke dalam mana?)
+const daftar = document.querySelector("#daftarTugas");
+daftar.append(elemenBaru);</pre>
+      <p>Perintah <code>append()</code> akan menaruh elemen barumu di <strong>urutan paling bawah (terakhir)</strong> di
+        dalam elemen induknya.</p>
+
+      <h2 class="sec">4. Menghapus Elemen</h2>
+      <p>Jika ada elemen yang tidak dibutuhkan lagi (misalnya menghapus pesan peringatan atau menghapus item keranjang
+        belanja), gunakan perintah <code>remove()</code>.</p>
+      <pre>const notifikasi = document.querySelector(".alert");
+
+// Hapus elemen tersebut sampai hilang dari HTML
+notifikasi.remove();</pre>
+    </section>
+
+    <section id="praktikum">
+      <h2 class="sec">Praktikum</h2>
+      <p>Tiga latihan dasar untuk membiasakanmu dengan perintah baru ini. Pemeriksaan berjalan otomatis — tidak perlu
+        screenshot.</p>
+      <div id="praktikumList"></div>
+    </section>
+
+    <section id="tugas">
+      <h2 class="sec">Tugas</h2>
+      <p>Dua tugas berikut menggabungkan materi yang sudah kamu pelajari hari ini. Kerjakan dengan saksama dan isi
+        catatan refleksinya.</p>
+      <div id="tugasList"></div>
+    </section>
+
+    <section id="laporan">
+      <h2 class="sec">Pengumpulan</h2>
+      <div class="card">
+        <h3 style="margin-top:0">Identitas peserta</h3>
+        <div class="ident">
+          <div><label for="nameInput">Nama lengkap</label><input id="nameInput" placeholder="Nama lengkapmu"></div>
+          <div><label for="schoolInput">Sekolah / Kelas</label><input id="schoolInput"
+              placeholder="Contoh: SMK X — XI RPL"></div>
+          <div><label for="dateInput">Tanggal</label><input id="dateInput" type="date"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Refleksi</h3>
+        <div class="label" style="margin-top:14px">1. Kenapa membuat elemen baru harus melewati 3 tahap (createElement,
+          isi teks, append)?</div>
+        <textarea class="note" id="reflection1" placeholder="Jelaskan menurut pemahamanmu..."></textarea>
+        <div class="label">2. Kesimpulan (3–5 kalimat)</div>
+        <textarea class="note" id="conclusion" style="min-height:110px"
+          placeholder="Tuliskan apa yang kamu pahami tentang value, atribut, dan createElement."></textarea>
+      </div>
+
+      <div class="card" style="text-align:center">
+        <button class="btn primary big" id="printButton2">⎙ Cetak / Simpan PDF</button>
+      </div>
+    </section>
+
+    <footer>Modul DOM 1b — Form, Atribut &amp; Elemen • Progresmu tersimpan otomatis di browser ini.</footer>
+  </div>
+
+  <div id="printReport"></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const BASE_CSS = 'body{font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:#2c2c2b;margin:0;padding:18px;background:#fff}h1,h2,h3{margin:0 0 8px}h2{font-size:19px}p{margin:0 0 8px}ul{padding-left:20px;margin:0 0 8px}li{margin:5px 0}strong{font-weight:750}';
+
+    const tasks = [
+      {
+        kind: 'praktikum',
+        title: 'Membaca isi Form',
+        target: 'Mengambil teks dari input menggunakan .value',
+        brief: 'Di panel pratinjau ada sebuah input teks dan span kosong. Ambil teks dari input <code>#namaUser</code>, lalu tuliskan teks tersebut ke dalam <code>#sapaan</code>.',
+        experiment: 'Coba ganti kata "Budi" pada value input di kodemu untuk melihat perubahannya. Ini simulasi mengambil ketikan pengunjung.',
+        question: 'Kenapa kita tidak menggunakan textContent untuk mengambil isi dari tag <input>?',
+        markup: '<input id="namaUser" value="Budi">\n<p>Halo, <strong id="sapaan">...</strong>!</p>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'input{padding:8px 12px;border:1px solid #ccc;border-radius:6px;font-size:15px}</style></head><body><input id="namaUser" value="Budi"><p style="margin-top:12px;font-size:18px">Halo, <strong id="sapaan" style="color:#2783de">...</strong>!</p>{{JS}}</body></html>',
+        starter: 'const input = document.querySelector("#namaUser");\nconst sapaan = document.querySelector("#sapaan");\n\n// 1. Ambil isi input dengan memanggil .value\n// 2. Tuliskan isinya ke sapaan.textContent\n',
+        tests: [
+          ['Teks "Budi" sudah tampil di #sapaan', c => c.text('#sapaan') === 'Budi'],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'praktikum',
+        title: 'Mengubah Atribut Gambar',
+        target: 'Menggunakan JavaScript untuk mengubah properti .src dan .disabled',
+        brief: 'Ubah foto profil yang rusak. Pilih gambar <code>#avatar</code>, ganti <code>src</code>-nya menjadi <code>https://w7.pngwing.com/pngs/802/825/png-transparent-redbubble-polite-cat-meme-funny-cat-meme-thumbnail.png</code>. Lalu matikan tombol <code>#btnUpload</code> agar tidak bisa diklik dengan mengatur <code>disabled = true</code>.',
+        question: 'Atribut apa lagi pada HTML yang sering diubah nilainya selain src?',
+        markup: '<img id="avatar" src="gambar-rusak.jpg">\n<button id="btnUpload">Upload</button>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'img{border-radius:50%;width:100px;height:100px;background:#f0efed;display:block;margin-bottom:12px;border:2px solid #ccc}button{padding:8px 16px;border-radius:6px;border:1px solid #ccc;cursor:pointer}button:disabled{background:#f0efed;color:#999;cursor:not-allowed}</style></head><body><img id="avatar" src="gambar-rusak.jpg" alt="Avatar"><button id="btnUpload">Upload Foto</button>{{JS}}</body></html>',
+        starter: 'const foto = document.querySelector("#avatar");\nconst tombol = document.querySelector("#btnUpload");\n\n// 1. Ubah foto.src\n// 2. Ubah tombol.disabled\n',
+        tests: [
+          ['Sumber gambar telah diubah menjadi cuking lucu', c => c.q('#avatar').src.includes('pngwing.com')],
+          ['Tombol berhasil dinonaktifkan (disabled)', c => c.q('#btnUpload').disabled === true],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'praktikum',
+        title: 'Membuat Elemen Baru',
+        target: 'Merakit elemen dengan document.createElement lalu menaruhnya dengan append',
+        brief: 'Tambahkan divisi "Desain" ke daftar <code>#listDivisi</code>. Lakukan 3 langkah: gunakan <code>document.createElement("li")</code>, isi teksnya menjadi "Desain", lalu masukkan dengan <code>append()</code> ke dalam list.',
+        question: 'Jika kita lupa menjalankan langkah ketiga (append), apa yang terjadi pada elemen tersebut?',
+        markup: '<ul id="listDivisi">\n  <li>Programmer</li>\n  <li>Marketing</li>\n</ul>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'ul{background:#f9f8f7;padding:16px 16px 16px 36px;border-radius:8px;border:1px solid #e6e5e3}li{padding:4px 0}</style></head><body><h2>Daftar Divisi</h2><ul id="listDivisi"><li>Programmer</li><li>Marketing</li></ul>{{JS}}</body></html>',
+        starter: 'const daftar = document.querySelector("#listDivisi");\n\n// 1. Buat elemen li baru\nconst liBaru = document.createElement("li");\n\n// 2. Isi teks liBaru\n\n// 3. Masukkan liBaru ke dalam daftar\n',
+        tests: [
+          ['Daftar sekarang memiliki 3 item', c => c.all('li').length === 3],
+          ['Item ketiga bertuliskan "Desain"', c => c.all('li')[2] && c.all('li')[2].textContent === 'Desain'],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'tugas',
+        title: 'Merakit To-Do List',
+        target: 'Mengkombinasikan pengambilan .value, createElement, append, lalu mengosongkan input.',
+        brief: '1. Ambil teks dari form <code>#tugasInput</code>.<br>2. Buat elemen <code>li</code> baru.<br>3. Isi teks li tersebut dengan data dari input.<br>4. Masukkan (append) li ke <code>#daftarTugas</code>.<br>5. Kosongkan kembali form <code>#tugasInput</code> dengan menimpa value-nya menjadi <code>""</code>.',
+        question: 'Mengapa form perlu dikosongkan lagi setelah elemen baru ditambahkan?',
+        markup: '<input id="tugasInput" value="Makan Siang">\n<ul id="daftarTugas">\n  <li>Belajar DOM</li>\n</ul>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'input{padding:8px 12px;border:1px solid #ccc;border-radius:6px;width:100%;max-width:300px;margin-bottom:12px;font-size:15px}ul{background:#f9f8f7;padding:16px 16px 16px 36px;border-radius:8px;border:1px solid #e6e5e3}</style></head><body><input id="tugasInput" value="Makan Siang"><ul id="daftarTugas"><li>Belajar DOM</li></ul>{{JS}}</body></html>',
+        starter: 'const input = document.querySelector("#tugasInput");\nconst daftar = document.querySelector("#daftarTugas");\n\n// 1. Ambil teks dari input\n\n// 2. Buat elemen li baru\n\n// 3. Isi teks li dengan teks dari input\n\n// 4. Masukkan (append) li ke dalam daftar\n\n// 5. Kosongkan kembali form input\n',
+        tests: [
+          ['Item tugas bertambah menjadi 2', c => c.all('li').length === 2],
+          ['Item baru berisi "Makan Siang"', c => c.all('li')[1] && c.all('li')[1].textContent === 'Makan Siang'],
+          ['Input #tugasInput telah dikosongkan', c => c.q('#tugasInput').value === ''],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'tugas',
+        title: 'Membersihkan Keranjang (Remove)',
+        target: 'Menggunakan perulangan untuk menghapus elemen spesifik.',
+        brief: 'Keranjang belanja ini berisi barang yang sudah dibayar dan belum. Barang yang sudah dibayar memiliki kelas <code>.dibayar</code>. Cari semua barang tersebut (ingat <code>querySelectorAll</code>), lalu gunakan perulangan <code>forEach</code> untuk menghapus masing-masing barang dengan perintah <code>remove()</code>.',
+        question: 'Apa bedanya menghilangkan class dari elemen (classList.remove) dengan menghapus elemennya secara utuh (remove())?',
+        markup: '<ul id="keranjang">\n  <li>Buku</li>\n  <li class="dibayar">Pensil</li>\n  <li class="dibayar">Penghapus</li>\n  <li>Penggaris</li>\n</ul>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'ul{background:#f9f8f7;padding:16px 16px 16px 36px;border-radius:8px;border:1px solid #e6e5e3}.dibayar{text-decoration:line-through;color:#d44f45}.dibayar::after{content:" (sudah dibayar)";font-size:12px}</style></head><body><h2>Keranjang Belanja</h2><ul id="keranjang"><li>Buku</li><li class="dibayar">Pensil</li><li class="dibayar">Penghapus</li><li>Penggaris</li></ul>{{JS}}</body></html>',
+        starter: 'const barangDibayar = document.querySelectorAll(".dibayar");\n\n// Gunakan forEach untuk membuang elemen satu per satu\nbarangDibayar.forEach(function (barang) {\n  // hapus barang\n});\n',
+        tests: [
+          ['Item "Pensil" dan "Penghapus" sudah dihapus (sisa 2 di keranjang)', c => c.all('li').length === 2],
+          ['Tidak ada lagi barang berkelas .dibayar di keranjang', c => c.all('.dibayar').length === 0],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      }
+    ];
+
+    const KEY = 'domModul1bFormAtributV1';
+    let busy = false;
+    let state = { identity: {}, answers: tasks.map(t => t.starter), notes: tasks.map(() => ''), done: tasks.map(() => false), results: tasks.map(() => null), reflection1: '', conclusion: '' };
+    const $ = id => document.getElementById(id);
+    function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
+
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)) } catch (e) { } }
+
+    function load() {
+      try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved) { state = { ...state, ...saved }; state.answers = tasks.map((t, i) => saved.answers?.[i] ?? t.starter); state.notes = tasks.map((_, i) => saved.notes?.[i] ?? ''); state.done = tasks.map((_, i) => !!saved.done?.[i]); state.results = tasks.map((_, i) => saved.results?.[i] ?? null) } } catch (e) { }
+      const d = new Date();
+      $('nameInput').value = state.identity.name || '';
+      $('schoolInput').value = state.identity.school || '';
+      $('dateInput').value = state.identity.date || `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      $('reflection1').value = state.reflection1 || '';
+      $('conclusion').value = state.conclusion || '';
+      buildCards();
+      renderProgress();
+      tasks.forEach((t, i) => { runPreview(i, t, state.answers[i]); renderResult(i) });
+    }
+
+    function cardHtml(t, i) {
+      const isTugas = t.kind === 'tugas';
+      const num = isTugas ? i - 2 : i + 1;
+      const label = isTugas ? `Tugas ${num}` : `Praktikum ${num}`;
+      return `<article class="ex" id="ex-${i}">
+    <div class="ex-head">
+      <div class="ex-meta"><span class="badge ${isTugas ? 'task' : ''}">${label}</span><span class="badge ok" id="dot-${i}" style="display:none">✓ selesai</span></div>
+      <h3>${esc(t.title)}</h3>
+      <p class="target">${esc(t.target)}</p>
+    </div>
+    <div class="ex-body">
+      <p>${t.brief}</p>
+      <details><summary>Struktur HTML halaman</summary><pre class="plain" id="ref-${i}"></pre></details>
+      <div class="label">Kode JavaScript<span class="btns"><button class="btn" id="reset-${i}">Reset</button><button class="btn" id="run-${i}">▶ Jalankan saja</button></span></div>
+      <textarea class="editor" id="ed-${i}" spellcheck="false"></textarea>
+      <div class="label">Pratinjau halaman</div>
+      <div class="frame-wrap" id="pw-${i}"></div>
+      <div class="result" id="rs-${i}"></div>
+      <div style="margin-top:16px"><button class="btn primary big" id="check-${i}">Jalankan &amp; Cek</button></div>
+      ${t.experiment ? `<div class="callout info" style="margin-top:18px"><strong>Eksperimen</strong>${t.experiment}</div>` : ''}
+      ${t.question ? `<div class="label">Pertanyaan</div><p class="hint" style="margin:-2px 0 7px">${esc(t.question)}</p><textarea class="note" id="nt-${i}" placeholder="Jawabanmu ikut tercetak di laporan..."></textarea>` : ''}
+    </div>
+  </article>`;
+    }
+
+    function buildCards() {
+      $('praktikumList').innerHTML = tasks.map((t, i) => t.kind === 'praktikum' ? cardHtml(t, i) : '').join('');
+      $('tugasList').innerHTML = tasks.map((t, i) => t.kind === 'tugas' ? cardHtml(t, i) : '').join('');
+      tasks.forEach((t, i) => {
+        $('ref-' + i).textContent = t.markup;
+        $('ed-' + i).value = state.answers[i];
+        if (t.question) $('nt-' + i).value = state.notes[i] || '';
+        $('ed-' + i).addEventListener('input', () => { state.answers[i] = $('ed-' + i).value; save() });
+        $('ed-' + i).addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); const el = e.target, s = el.selectionStart, n = el.selectionEnd; el.value = el.value.slice(0, s) + '  ' + el.value.slice(n); el.selectionStart = el.selectionEnd = s + 2; state.answers[i] = el.value; save() } });
+        if (t.question) $('nt-' + i).addEventListener('input', () => { state.notes[i] = $('nt-' + i).value; save() });
+        $('reset-' + i).onclick = () => { if (confirm('Kembalikan kode latihan ini ke kondisi awal?')) { state.answers[i] = t.starter; state.done[i] = false; state.results[i] = null; $('ed-' + i).value = t.starter; save(); renderProgress(); renderResult(i); runPreview(i, t, t.starter) } };
+        $('run-' + i).onclick = () => check(i, true);
+        $('check-' + i).onclick = () => check(i, false);
+      });
+    }
+
+    function buildDoc(t, code) {
+      const bridge = '<script>window.__logs=[];window.__err=null;(function(){var _l=console.log;console.log=function(){try{window.__logs.push(Array.prototype.slice.call(arguments).map(function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" "))}catch(e){}try{_l.apply(console,arguments)}catch(e){}}})();window.addEventListener("error",function(e){if(!window.__err)window.__err=e.message});<\/script>';
+      const userScript = '<script>try{\n' + code + '\n}catch(e){window.__err=e.message}<\/script>';
+      return t.html.replace('{{JS}}', bridge + userScript);
+    }
+    function runPreview(i, t, code) {
+      return new Promise(resolve => {
+        const wrap = $('pw-' + i); wrap.innerHTML = '';
+        const f = document.createElement('iframe');
+        f.setAttribute('title', 'Pratinjau halaman');
+        const fit = () => { try { const b = f.contentDocument.body; const hh = Math.max(b.scrollHeight, Math.ceil(b.getBoundingClientRect().bottom)); f.style.height = Math.min(560, Math.max(170, hh + 22)) + 'px' } catch (e) { } };
+        f.addEventListener('load', () => { fit(); setTimeout(fit, 90); resolve(f) }, { once: true });
+        wrap.appendChild(f);
+        f.srcdoc = buildDoc(t, code);
+      });
+    }
+    function makeCtx(frame) {
+      const f = frame;
+      const doc = () => f.contentDocument;
+      return {
+        q: sel => doc().querySelector(sel),
+        all: sel => Array.from(doc().querySelectorAll(sel)),
+        text: sel => { const el = doc().querySelector(sel); return el ? el.textContent.trim() : null },
+        has: (sel, cls) => { const el = doc().querySelector(sel); return !!el && el.classList.contains(cls) },
+        wait: ms => new Promise(r => setTimeout(r, ms || 60)),
+        err() { try { return f.contentWindow.__err || null } catch (e) { return null } },
+        logs() { try { return (f.contentWindow.__logs || []).slice() } catch (e) { return [] } }
+      };
+    }
+    async function check(i, onlyRun) {
+      if (busy) return; busy = true;
+      const btn = $('check-' + i); const label = btn.textContent;
+      btn.disabled = true; $('run-' + i).disabled = true; btn.textContent = 'Menguji…';
+      try {
+        state.answers[i] = $('ed-' + i).value;
+        const t = tasks[i]; const code = state.answers[i];
+        const f = await runPreview(i, t, code);
+        const ctx = makeCtx(f);
+        await ctx.wait(120);
+        if (onlyRun) {
+          state.results[i] = { only: true, error: ctx.err(), logs: ctx.logs() };
+          save(); renderResult(i); return;
+        }
+        const rows = [];
+        for (const [name, fn] of t.tests) { let pass = false; try { pass = !!await fn(ctx) } catch (e) { pass = false } rows.push({ name, pass }) }
+        const passed = rows.every(x => x.pass);
+        state.done[i] = passed;
+        state.results[i] = { passed, rows, error: ctx.err(), logs: ctx.logs() };
+        save(); renderProgress(); renderResult(i);
+        toast(passed ? (t.kind === 'tugas' ? 'Tugas selesai!' : 'Praktikum selesai!') : 'Belum sesuai — periksa hasilnya.');
+      } finally {
+        busy = false; btn.disabled = false; $('run-' + i).disabled = false; btn.textContent = label;
+      }
+    }
+    function renderResult(i) {
+      const res = state.results[i]; const box = $('rs-' + i); const dot = $('dot-' + i);
+      if (dot) dot.style.display = state.done[i] ? 'inline-block' : 'none';
+      if (!box) return;
+      if (!res) { box.className = 'result'; box.innerHTML = ''; return }
+      const consoleText = res.logs && res.logs.length ? res.logs.join('\n') : 'Tidak ada output console.log().';
+      if (res.only) {
+        box.className = `result show ${res.error ? 'fail' : 'pass'}`;
+        box.innerHTML = `<h4>${res.error ? 'Halaman memunculkan error' : 'Kode berhasil dijalankan'}</h4>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : '<div class="test-row"><span>Cek hasilnya di atas.</span></div>'}<div class="console">${esc(consoleText)}</div>`;
+        return;
+      }
+      box.className = `result show ${res.passed ? 'pass' : 'fail'}`;
+      box.innerHTML = `<h4>${res.passed ? '✓ Semua pengujian berhasil' : 'Periksa kembali kodemu'}</h4>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : ''}${(res.rows || []).map(x => `<div class="test-row"><span class="test-icon">${x.pass ? '✓' : '×'}</span><span>${esc(x.name)}</span></div>`).join('')}<div class="console">${esc(consoleText)}</div>`;
+    }
+    function renderProgress() { const n = state.done.filter(Boolean).length; $('progressText').textContent = `${n} / ${tasks.length} selesai`; $('progressBar').style.width = `${n / tasks.length * 100}%` }
+    function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); setTimeout(() => $('toast').classList.remove('show'), 1800) }
+
+    function syncIdentity() { state.identity = { name: $('nameInput').value.trim(), school: $('schoolInput').value.trim(), date: $('dateInput').value }; save() }
+
+    function buildPrint() {
+      ['reflection1', 'conclusion'].forEach(id => { state[id] = $(id).value });
+      syncIdentity();
+      const i = state.identity; const n = state.done.filter(Boolean).length; const score = Math.round(n / tasks.length * 100);
+      $('printReport').innerHTML = `<div class="print-cover"><h1>Modul DOM 1b — Form, Atribut &amp; Elemen Baru</h1><p>Laporan praktikum dan tugas</p><div class="print-meta"><div><strong>Nama:</strong> ${esc(i.name || 'Belum diisi')}</div><div><strong>Tanggal:</strong> ${esc(i.date || '-')}</div><div><strong>Sekolah/Kelas:</strong> ${esc(i.school || '-')}</div><div><strong>Skor:</strong> ${score}/100 (${n} dari ${tasks.length} latihan)</div></div></div>` +
+        tasks.map((t, k) => {
+          const isTugas = t.kind === 'tugas'; const num = isTugas ? k - 2 : k + 1;
+          return `<div class="print-section"><h2>${isTugas ? 'Tugas' : 'Praktikum'} ${num} — ${esc(t.title)}</h2><h3 class="print-status ${state.done[k] ? 'print-pass' : 'print-fail'}">${state.done[k] ? '✓ Lulus pengujian' : '× Belum lulus pengujian'}</h3><h3>Kode JavaScript</h3><div class="print-code">${esc(state.answers[k])}</div>${t.question ? `<h3>${esc(t.question)}</h3><div class="print-reflection">${esc(state.notes[k] || 'Belum diisi')}</div>` : ''}</div>`;
+        }).join('') +
+        `<div class="print-section"><h2>Refleksi</h2><h3>Tentang 3 Tahap CreateElement</h3><div class="print-reflection">${esc(state.reflection1 || 'Belum diisi')}</div><h3>Kesimpulan</h3><div class="print-reflection">${esc(state.conclusion || 'Belum diisi')}</div></div>`;
+    }
+
+    ['nameInput', 'schoolInput', 'dateInput'].forEach(id => $(id).addEventListener('input', syncIdentity));
+    ['reflection1', 'conclusion'].forEach(id => $(id).addEventListener('input', () => { state[id] = $(id).value; save() }));
+    $('printButton').onclick = () => { buildPrint(); window.print() };
+    $('printButton2').onclick = () => { buildPrint(); window.print() };
+    window.addEventListener('beforeprint', buildPrint);
+    load();
+  </script>
+</body>
+
+</html>
