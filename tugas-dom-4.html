@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tugas Praktik DOM</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #f0efed;
+      color: #2c2c2b;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .dashboard {
+      background: #fff;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #e6e5e3;
+    }
+
+    .profil {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e6e5e3;
+    }
+
+    #foto-profil {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: bold;
+      background: #e6e5e3;
+    }
+
+    .badge.aktif {
+      background: #e8f1ec;
+      color: #31875f;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: none;
+      /* Disembunyikan secara default */
+    }
+
+    .alert.error {
+      display: block;
+      background: #fce9e7;
+      color: #d44f45;
+      border: 1px solid #efc4c0;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+      background: #f9f8f7;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: 1px solid #2783de;
+      background: #2783de;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #ccc;
+      border-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    ul {
+      background: #f9f8f7;
+      padding: 16px 16px 16px 36px;
+      border-radius: 8px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="dashboard">
+    <!-- Bagian Peringatan -->
+    <div id="pesan-sistem" class="alert error">
+      Terdapat kesalahan sistem! Segera perbaiki.
+    </div>
+
+    <!-- Bagian Profil -->
+    <div class="profil">
+      <img id="foto-profil" src="gambar-lama.jpg" alt="Profil">
+      <div>
+        <h2 id="nama-karyawan" style="margin: 0 0 4px;">Nama Default</h2>
+        <p class="jabatan" style="margin: 0 0 8px; color: #6f6d68;">Posisi Default</p>
+        <span id="status-kerja" class="badge">Offline</span>
+      </div>
+    </div>
+
+    <!-- Bagian Laporan -->
+    <div class="form-group">
+      <h3 style="margin-top: 0;">Laporan Hari Ini</h3>
+      <input type="text" id="input-laporan" value="Saya sudah menyelesaikan modul DOM dasar.">
+      <p style="font-size: 14px;">Preview: <strong id="preview-laporan">...</strong></p>
+      <button id="btn-simpan" disabled>Simpan Laporan</button>
+    </div>
+
+    <!-- Bagian Daftar Kegiatan -->
+    <h3>Daftar Kegiatan</h3>
+    <ul id="list-kegiatan">
+      <li>Merapikan meja kerja</li>
+      <li>Membaca modul 1 DOM</li>
+      <li id="kegiatan-batal">Kegiatan ini dibatalkan (harus dihapus)</li>
+    </ul>
+  </div>
+
+</body>
+
+</html>
