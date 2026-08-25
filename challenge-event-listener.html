@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Challenge Individu — Event Listener (Kedai Kita)</title>
+  <style>
+    :root {
+      --ink: #2c2c2b;
+      --muted: #7d7a75;
+      --canvas: #fff;
+      --soft: #f9f8f7;
+      --surface: #f0efed;
+      --line: #e6e5e3;
+      --blue: #2783de;
+      --blue-soft: #e5f2fc;
+      --green: #46a171;
+      --green-soft: #e8f1ec;
+      --orange: #d5803b;
+      --orange-soft: #fbebde;
+      --red: #e56458;
+      --red-soft: #fce9e7;
+      --code: #202124;
+      --radius: 10px
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit
+    }
+
+    .app {
+      min-height: 100vh
+    }
+
+    .topbar {
+      height: 68px;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 20
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800
+    }
+
+    .brand strong {
+      display: block
+    }
+
+    .brand small {
+      color: var(--muted)
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    .progress {
+      width: 160px;
+      height: 8px;
+      background: var(--surface);
+      border-radius: 99px;
+      overflow: hidden
+    }
+
+    .progress>span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--green);
+      transition: .25s
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px 44px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 24px
+    }
+
+    .panel {
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: var(--radius)
+    }
+
+    .sidebar {
+      align-self: start;
+      position: sticky;
+      top: 96px;
+      overflow: hidden
+    }
+
+    .team-card {
+      padding: 18px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    .team-name {
+      font-weight: 750;
+      margin: 3px 0 2px
+    }
+
+    .members {
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    .nav-title {
+      padding: 16px 18px 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted)
+    }
+
+    .question-nav {
+      padding: 0 8px 10px
+    }
+
+    .nav-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      padding: 11px 10px;
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 28px 1fr 20px;
+      gap: 9px;
+      align-items: center;
+      color: var(--ink);
+      cursor: pointer
+    }
+
+    .nav-item:hover {
+      background: var(--soft)
+    }
+
+    .nav-item.active {
+      background: var(--blue-soft);
+      color: #155f9f
+    }
+
+    .nav-num {
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      background: white
+    }
+
+    .nav-item.done .nav-num {
+      background: var(--green);
+      border-color: var(--green);
+      color: white
+    }
+
+    .nav-check {
+      color: var(--green);
+      font-weight: 800
+    }
+
+    .print-side {
+      margin: 8px 14px 16px;
+      width: calc(100% - 28px)
+    }
+
+    .main {
+      min-width: 0
+    }
+
+    .hero {
+      padding: 28px 30px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start
+    }
+
+    .hero h1 {
+      font-size: 29px;
+      line-height: 1.15;
+      margin: 5px 0 9px;
+      letter-spacing: -.02em
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 650px
+    }
+
+    .role-card {
+      min-width: 220px;
+      background: var(--orange-soft);
+      border: 1px solid #f0d9c3;
+      padding: 14px;
+      border-radius: 9px
+    }
+
+    .role-card strong {
+      display: block;
+      margin: 3px 0
+    }
+
+    .role-card small {
+      color: #7a4d24
+    }
+
+    .question {
+      overflow: hidden
+    }
+
+    .q-head {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 9px;
+      flex-wrap: wrap
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 750;
+      background: var(--blue-soft);
+      color: #155f9f
+    }
+
+    .badge.medium {
+      background: var(--orange-soft);
+      color: #85501f
+    }
+
+    .badge.hard {
+      background: var(--red-soft);
+      color: #9c3a30
+    }
+
+    .badge.type {
+      background: var(--surface);
+      color: var(--muted)
+    }
+
+    .q-head h2 {
+      font-size: 24px;
+      margin: 0 0 6px
+    }
+
+    .q-head p {
+      margin: 0;
+      color: var(--muted)
+    }
+
+    .q-body {
+      padding: 25px 28px
+    }
+
+    .brief {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      padding: 17px 18px;
+      margin-bottom: 20px
+    }
+
+    .brief p {
+      margin: 0 0 8px
+    }
+
+    .brief ul {
+      margin: 8px 0 0;
+      padding-left: 22px
+    }
+
+    .brief code {
+      background: var(--surface);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: .92em
+    }
+
+    .diagnosis {
+      margin: 0 0 20px
+    }
+
+    .diagnosis label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px
+    }
+
+    .diagnosis textarea {
+      width: 100%;
+      min-height: 70px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px;
+      resize: vertical;
+      background: white
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start
+    }
+
+    .editor-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px
+    }
+
+    .editor-head strong {
+      font-size: 14px
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .editor {
+      width: 100%;
+      min-height: 320px;
+      resize: vertical;
+      border: 1px solid #3f4247;
+      background: var(--code);
+      color: #f3f4f6;
+      border-radius: 9px;
+      padding: 17px;
+      font: 13.5px/1.62 Consolas, "Courier New", monospace;
+      tab-size: 2;
+      outline: none
+    }
+
+    .editor:focus {
+      border-color: #70b6f3;
+      box-shadow: 0 0 0 3px rgba(39, 131, 222, .16)
+    }
+
+    .preview-col strong {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 8px
+    }
+
+    .frame-wrap {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+      background: var(--canvas);
+      min-height: 320px
+    }
+
+    .frame-wrap iframe {
+      width: 100%;
+      height: 320px;
+      border: 0;
+      display: block;
+      background: #fff
+    }
+
+    .hint {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 8px 0 0
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 42px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: var(--soft)
+    }
+
+    .btn:focus-visible,
+    .nav-item:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 2px
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white
+    }
+
+    .btn.primary:hover {
+      background: #176fc0
+    }
+
+    .btn.ghost {
+      padding: 7px 10px;
+      min-height: 36px;
+      font-size: 13px
+    }
+
+    .result {
+      display: none;
+      margin-top: 16px;
+      border-radius: 9px;
+      padding: 16px
+    }
+
+    .result.show {
+      display: block
+    }
+
+    .result.pass {
+      background: var(--green-soft);
+      border: 1px solid #bfe0cf
+    }
+
+    .result.fail {
+      background: var(--red-soft);
+      border: 1px solid #f4c7c1
+    }
+
+    .result h3 {
+      font-size: 16px;
+      margin: 0 0 8px
+    }
+
+    .test-row {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      font-size: 14px;
+      margin: 5px 0
+    }
+
+    .test-icon {
+      font-weight: 900
+    }
+
+    .pass .test-icon {
+      color: var(--green)
+    }
+
+    .fail .test-icon {
+      color: var(--red)
+    }
+
+    .console {
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 11px;
+      border-radius: 7px;
+      font: 12.5px/1.5 Consolas, monospace;
+      white-space: pre-wrap;
+      color: #4c4b48
+    }
+
+    .footer-actions {
+      padding: 18px 28px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap
+    }
+
+    .reflection {
+      padding: 24px 28px;
+      margin-top: 18px
+    }
+
+    .reflection h2 {
+      font-size: 20px;
+      margin: 0 0 5px
+    }
+
+    .reflection>p {
+      margin: 0 0 18px;
+      color: var(--muted)
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px
+    }
+
+    .field textarea,
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px;
+      background: white;
+      min-height: 46px
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical
+    }
+
+    .identity-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 20, 20, .55);
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 20px
+    }
+
+    .identity-overlay.hidden {
+      display: none
+    }
+
+    .modal {
+      width: min(680px, 100%);
+      background: white;
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .18)
+    }
+
+    .modal h1 {
+      font-size: 26px;
+      margin: 4px 0 7px
+    }
+
+    .modal>p {
+      color: var(--muted);
+      margin: 0 0 21px
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .form-grid .wide {
+      grid-column: 1/-1
+    }
+
+    .modal label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 5px
+    }
+
+    .modal input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 22px
+    }
+
+    .print-report {
+      display: none
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      background: #252525;
+      color: #fff;
+      padding: 11px 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: .2s;
+      z-index: 110
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: none
+    }
+
+    @media(max-width:960px) {
+      .split {
+        grid-template-columns: 1fr
+      }
+
+      .frame-wrap iframe {
+        height: 260px
+      }
+    }
+
+    @media(max-width:820px) {
+      .topbar {
+        padding: 0 18px
+      }
+
+      .progress {
+        width: 90px
+      }
+
+      .layout {
+        display: block;
+        padding: 18px
+      }
+
+      .sidebar {
+        position: static;
+        margin-bottom: 16px
+      }
+
+      .question-nav {
+        display: flex;
+        overflow-x: auto;
+        padding: 8px
+      }
+
+      .nav-item {
+        min-width: 180px
+      }
+
+      .print-side {
+        display: none
+      }
+
+      .hero {
+        padding: 22px;
+        display: block
+      }
+
+      .role-card {
+        margin-top: 18px;
+        min-width: 0
+      }
+
+      .q-head,
+      .q-body,
+      .footer-actions,
+      .reflection {
+        padding-left: 20px;
+        padding-right: 20px
+      }
+
+      .field-grid,
+      .form-grid {
+        grid-template-columns: 1fr
+      }
+
+      .form-grid .wide {
+        grid-column: auto
+      }
+
+      .footer-actions .btn {
+        flex: 1
+      }
+
+      .brand small {
+        display: none
+      }
+    }
+
+    @media(max-width:470px) {
+      .progress-wrap span:first-child {
+        display: none
+      }
+
+      .layout {
+        padding: 12px
+      }
+
+      .hero h1 {
+        font-size: 24px
+      }
+
+      .q-head h2 {
+        font-size: 21px
+      }
+
+      .editor-head {
+        align-items: flex-start;
+        gap: 10px
+      }
+
+      .editor-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end
+      }
+
+      .footer-actions {
+        flex-wrap: wrap
+      }
+
+      .footer-actions .primary {
+        width: 100%;
+        flex-basis: 100%
+      }
+
+      .modal {
+        padding: 22px
+      }
+
+      .topbar {
+        height: 62px
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 14mm
+      }
+
+      body {
+        background: white;
+        font-size: 10pt
+      }
+
+      .app,
+      .identity-overlay,
+      .toast {
+        display: none !important
+      }
+
+      .print-report {
+        display: block;
+        color: #222
+      }
+
+      .print-cover {
+        border-bottom: 3px solid #2783de;
+        padding-bottom: 12px;
+        margin-bottom: 18px
+      }
+
+      .print-cover h1 {
+        font-size: 20pt;
+        margin: 0 0 3px
+      }
+
+      .print-cover p {
+        margin: 2px 0
+      }
+
+      .print-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px 18px;
+        margin-top: 12px
+      }
+
+      .print-section {
+        break-inside: avoid;
+        margin: 0 0 18px
+      }
+
+      .print-section h2 {
+        font-size: 13pt;
+        border-bottom: 1px solid #bbb;
+        padding-bottom: 4px;
+        margin: 0 0 7px
+      }
+
+      .print-section h3 {
+        font-size: 10.5pt;
+        margin: 0 0 5px
+      }
+
+      .print-code {
+        white-space: pre-wrap;
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        padding: 9px;
+        font: 8.5pt/1.35 Consolas, monospace;
+        border-radius: 5px
+      }
+
+      .print-status {
+        font-weight: bold
+      }
+
+      .print-pass {
+        color: #287651
+      }
+
+      .print-fail {
+        color: #b43e35
+      }
+
+      .print-reflection {
+        white-space: pre-wrap;
+        border-left: 3px solid #2783de;
+        padding-left: 9px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="identity-overlay" id="identityOverlay">
+    <form class="modal" id="identityForm">
+      <div class="eyebrow">Individual Challenge • Event Listener</div>
+      <h1>Isi identitas peserta</h1>
+      <p>Kerjakan setiap kasus secara individu. Sebagian kasus meminta kamu memperbaiki bug, sebagian lagi meminta kamu
+        melengkapi fitur yang belum selesai.</p>
+      <div class="form-grid">
+        <div class="wide"><label for="nameInput">Nama lengkap</label><input id="nameInput" required
+            placeholder="Nama peserta"></div>
+        <div><label for="schoolInput">Sekolah / kelas</label><input id="schoolInput" required
+            placeholder="Contoh: SMK X — XI RPL"></div>
+        <div><label for="dateInput">Tanggal</label><input id="dateInput" type="date" required></div>
+      </div>
+      <div class="modal-actions"><button class="btn primary" type="submit">Mulai challenge →</button></div>
+    </form>
+  </div>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">JS</div>
+        <div><strong>Event Listener Challenge</strong><small>Kedai Kita • Individu</small></div>
+      </div>
+      <div class="progress-wrap"><span id="progressText">0 / 7 selesai</span>
+        <div class="progress" aria-label="Progress"><span id="progressBar"></span></div>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar panel">
+        <div class="team-card">
+          <div class="eyebrow">Peserta</div>
+          <div class="team-name" id="teamName">Belum diisi</div>
+          <div class="members" id="teamMembers">—</div>
+        </div>
+        <div class="nav-title">DAFTAR MISI</div>
+        <nav class="question-nav" id="questionNav" aria-label="Daftar soal"></nav>
+        <button class="btn print-side" id="editIdentity">✎ Edit identitas</button>
+        <button class="btn print-side" id="printButton">⎙ Cetak / Simpan PDF</button>
+      </aside>
+      <main class="main">
+        <section class="hero panel">
+          <div>
+            <div class="eyebrow">Modul Lanjutan • Event Listener</div>
+            <h1>Tujuh misi di Kedai Kita, temukan &amp; bangun sendiri solusinya.</h1>
+            <p>Beberapa kasus berisi bug yang harus kamu diagnosis dan perbaiki, beberapa lagi berisi fitur yang belum
+              selesai dan harus kamu lengkapi. Setiap perubahan langsung terlihat di pratinjau toko sebelah kode.</p>
+          </div>
+          <div class="role-card">
+            <div class="eyebrow">Studi kasus</div><strong>Kedai Kita</strong><small>Toko mini dengan keranjang belanja,
+              kupon, dan checkout.</small>
+          </div>
+        </section>
+        <section class="question panel">
+          <div class="q-head">
+            <div class="meta"><span class="badge" id="qNumber">Misi 1</span><span class="badge"
+                id="qDifficulty">Mudah</span><span class="badge type" id="qType">Debug</span></div>
+            <h2 id="qTitle"></h2>
+            <p id="qSubtitle"></p>
+          </div>
+          <div class="q-body">
+            <div class="brief" id="qBrief"></div>
+            <div class="diagnosis"><label for="diagnosis"><strong>Diagnosis / rencana</strong> — jelaskan temuanmu atau
+                rencana implementasimu sebelum menulis kode.</label><textarea id="diagnosis"
+                placeholder="Contoh: addEventListener menggunakan nama event yang salah..."></textarea></div>
+            <div class="split">
+              <div class="editor-col">
+                <div class="editor-head"><strong>Kode JavaScript</strong>
+                  <div class="editor-actions"><button class="btn ghost" id="resetButton">Reset</button><button
+                      class="btn ghost" id="runOnlyButton">▶ Jalankan</button></div>
+                </div>
+                <textarea class="editor" id="editor" spellcheck="false" aria-label="Editor JavaScript"></textarea>
+                <p class="hint">Kode ini akan disisipkan ke halaman Kedai Kita di sebelah kanan (elemen HTML tidak bisa
+                  diubah).</p>
+              </div>
+              <div class="preview-col">
+                <strong>Pratinjau Kedai Kita</strong>
+                <div class="frame-wrap"><iframe id="previewFrame" title="Pratinjau Kedai Kita"></iframe></div>
+                <p class="hint">Pratinjau diperbarui setiap kamu menekan "Jalankan" atau "Jalankan &amp; Cek".</p>
+              </div>
+            </div>
+            <div class="result" id="resultBox"></div>
+          </div>
+          <div class="footer-actions"><button class="btn" id="prevButton">← Sebelumnya</button><button
+              class="btn primary" id="checkButton">Jalankan &amp; Cek</button><button class="btn"
+              id="nextButton">Selanjutnya →</button></div>
+        </section>
+        <section class="reflection panel">
+          <h2>Refleksi individu</h2>
+          <p>Isi setelah seluruh misi selesai. Jawaban ini akan ikut masuk ke PDF.</p>
+          <div class="field-grid">
+            <div class="field" style="grid-column:1/-1"><label for="reflection1">Strategi mana yang paling membantumu
+                menemukan bug atau merancang fitur baru?</label><textarea id="reflection1"
+                placeholder="Jelaskan langkah debugging / pengembangan yang kamu gunakan..."></textarea></div>
+            <div class="field" style="grid-column:1/-1"><label for="reflection2">Konsep event listener mana yang paling
+                menantang untukmu, dan mengapa?</label><textarea id="reflection2"
+                placeholder="Contoh: memahami this pada arrow function, event delegation, dsb..."></textarea></div>
+            <div class="field" style="grid-column:1/-1"><label for="conclusion">Kesimpulan individu</label><textarea
+                id="conclusion"
+                placeholder="Tuliskan 3–5 kalimat tentang event listener dan proses debugging/pengembangan yang kamu lakukan."></textarea>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <section class="print-report" id="printReport"></section>
+  <div class="toast" id="toast"></div>
+  <script>
+    const SHARED_CSS = '*{box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}body{margin:0;padding:20px;background:#f9f8f7;color:#2c2c2b}.store{max-width:360px;margin:0 auto;background:#fff;border:1px solid #e6e5e3;border-radius:10px;padding:18px}.store-title{margin:0 0 12px;font-size:18px}.product{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e6e5e3}.p-info{display:flex;flex-direction:column}.p-info span{color:#7d7a75;font-size:13px}.btn-add{background:#2783de;color:#fff;border:0;border-radius:6px;padding:7px 10px;font-weight:700;cursor:pointer}.btn-add:hover{background:#1f6fc0}.cart-box{margin-top:16px;padding-top:14px;border-top:2px dashed #e6e5e3}.cart-head{display:flex;justify-content:space-between;font-weight:700;margin-bottom:8px}#cart-list{list-style:none;padding:0;margin:0 0 12px}#cart-list li{display:flex;justify-content:space-between;align-items:center;background:#f9f8f7;border:1px solid #e6e5e3;border-radius:6px;padding:7px 10px;margin-bottom:6px;font-size:14px}.hapus-btn{background:#fce9e7;color:#e56458;border:1px solid #f4c7c1;border-radius:5px;padding:4px 8px;font-size:12px;cursor:pointer}#promo-form{display:flex;gap:6px;margin-bottom:6px}#promo-input{flex:1;padding:8px;border:1px solid #ccc;border-radius:6px}#promo-form button{padding:8px 12px;border:0;border-radius:6px;background:#46a171;color:#fff;font-weight:700;cursor:pointer}.promo-msg{min-height:16px;font-size:13px;color:#2f7a52;margin:0 0 10px}.cart-total-row{display:flex;justify-content:space-between;font-weight:800;font-size:16px;margin-bottom:12px}.checkout-btn{width:100%;padding:10px;border:0;border-radius:8px;background:#2c2c2b;color:#fff;font-weight:700;cursor:pointer}.checkout-btn:disabled{background:#cfcecb;cursor:not-allowed}';
+    const SHARED_HTML = '<div class="store"><h2 class="store-title">Kedai Kita</h2><div class="products"><div class="product"><div class="p-info"><strong>Kopi Susu</strong><span>Rp18.000</span></div><button class="btn-add" data-name="Kopi Susu" data-price="18000">+ Tambah</button></div><div class="product"><div class="p-info"><strong>Roti Bakar</strong><span>Rp15.000</span></div><button class="btn-add" data-name="Roti Bakar" data-price="15000">+ Tambah</button></div><div class="product"><div class="p-info"><strong>Es Teh</strong><span>Rp8.000</span></div><button class="btn-add" data-name="Es Teh" data-price="8000">+ Tambah</button></div></div><div class="cart-box"><div class="cart-head"><span>Keranjang</span><span id="cart-count">0 item</span></div><ul id="cart-list"></ul><form id="promo-form"><input id="promo-input" placeholder="Kode promo (mis. HEMAT10)"><button type="submit">Terapkan</button></form><p id="promo-message" class="promo-msg"></p><div class="cart-total-row"><span>Total</span><span id="cart-total">Rp0</span></div><button id="checkout-btn" class="checkout-btn" disabled>Checkout</button></div></div>';
+
+    function buildDoc(js) {
+      return '<!doctype html><html><head><meta charset="utf-8"><style>' + SHARED_CSS + '</style></head><body>' + SHARED_HTML +
+        '<script>window.__error=null;window.__logs=[];window.onerror=function(msg){window.__error=String(msg);return true;};var _origLog=console.log;console.log=function(){window.__logs.push(Array.prototype.slice.call(arguments).map(String).join(" "));_origLog.apply(console,arguments);};<\/script>' +
+        '<script>try{\n' + js + '\n}catch(e){window.__error=e.message;}<\/script></body></html>';
+    }
+
+    function loadFrame(js) {
+      return new Promise(function (resolve) {
+        const frame = $('previewFrame');
+        function onload() { frame.removeEventListener('load', onload); resolve(frame); }
+        frame.addEventListener('load', onload);
+        frame.srcdoc = buildDoc(js);
+      });
+    }
+
+    const missions = [
+      {
+        title: 'Kasus 01 — Tombol yang Tidak Bereaksi',
+        subtitle: 'Tombol "+ Tambah" tidak merespons klik sama sekali.',
+        difficulty: 'Mudah', type: 'Debug',
+        brief: '<p><strong>Laporan masalah:</strong> Pemilik Kedai Kita melaporkan tombol "+ Tambah" pada produk pertama sama sekali tidak bereaksi ketika diklik — jumlah pada keranjang tidak pernah berubah dari 0.</p><ul><li>Periksa nama event yang didaftarkan pada <code>addEventListener</code>.</li><li>Jangan mengubah struktur HTML.</li><li>Pastikan satu kali klik membuat keranjang menjadi "1 item".</li></ul>',
+        starter: "const tombolTambah = document.querySelector('.btn-add');\nconst jumlahKeranjang = document.getElementById('cart-count');\nlet jumlah = 0;\n\nfunction naikkanJumlah() {\n  jumlah++;\n  jumlahKeranjang.textContent = jumlah + ' item';\n}\n\ntombolTambah.addEventListener('onclick', naikkanJumlah);\n",
+        tests: [
+          { name: 'Klik tombol "+ Tambah" membuat keranjang menjadi "1 item"', run: function (doc) { doc.querySelector('.btn-add').click(); return doc.getElementById('cart-count').textContent.trim() === '1 item'; } }
+        ]
+      },
+      {
+        title: 'Kasus 02 — Notifikasi Keranjang Tidak Bertambah',
+        subtitle: 'Jumlah keranjang selalu kembali ke "1 item" walau diklik berkali-kali.',
+        difficulty: 'Mudah', type: 'Debug',
+        brief: '<p><strong>Laporan masalah:</strong> Tombol "+ Tambah" sudah bereaksi setiap diklik, tapi jumlah pada keranjang selalu menjadi "1 item" walaupun sudah diklik berkali-kali.</p><ul><li>Perhatikan di mana variabel penghitung dideklarasikan.</li><li>Pikirkan apa yang terjadi pada variabel tersebut setiap fungsi dipanggil ulang.</li><li>Tiga kali klik harus menghasilkan "3 item".</li></ul>',
+        starter: "const tombolTambah = document.querySelector('.btn-add');\nconst jumlahKeranjang = document.getElementById('cart-count');\n\ntombolTambah.addEventListener('click', function () {\n  let jumlah = 0;\n  jumlah++;\n  jumlahKeranjang.textContent = jumlah + ' item';\n});\n",
+        tests: [
+          { name: 'Klik 3 kali menghasilkan "3 item"', run: function (doc) { const btn = doc.querySelector('.btn-add'); btn.click(); btn.click(); btn.click(); return doc.getElementById('cart-count').textContent.trim() === '3 item'; } }
+        ]
+      },
+      {
+        title: 'Kasus 03 — Formulir Kode Promo Me-refresh Halaman',
+        subtitle: 'Submit formulir promo terasa memuat ulang halaman.',
+        difficulty: 'Mudah', type: 'Debug',
+        brief: '<p><strong>Laporan masalah:</strong> Setiap kali formulir kode promo di-submit, halaman terasa seperti mau reload dan pesan hasil pemeriksaan tidak sempat tampil.</p><ul><li>Ingat kembali fungsi <code>e.preventDefault()</code> pada materi Event Listener.</li><li>Formulir seharusnya tidak pernah memuat ulang halaman.</li><li>Pesan pada <code>#promo-message</code> harus tetap tampil setelah submit.</li></ul>',
+        starter: "const form = document.getElementById('promo-form');\nconst pesan = document.getElementById('promo-message');\n\nform.addEventListener('submit', function () {\n  pesan.textContent = 'Kode promo sedang diperiksa...';\n});\n",
+        tests: [
+          { name: 'Submit formulir tidak memuat ulang halaman (preventDefault dipanggil)', run: function (doc, win) { const form = doc.getElementById('promo-form'); const evt = new win.Event('submit', { bubbles: true, cancelable: true }); const notCancelled = form.dispatchEvent(evt); return notCancelled === false; } },
+          { name: 'Pesan promo tetap tampil setelah submit', run: function (doc, win) { const form = doc.getElementById('promo-form'); const evt = new win.Event('submit', { bubbles: true, cancelable: true }); form.dispatchEvent(evt); return doc.getElementById('promo-message').textContent.trim().length > 0; } }
+        ]
+      },
+      {
+        title: 'Kasus 04 — Tombol Hapus Tidak Berfungsi untuk Item Baru',
+        subtitle: 'Item baru masuk ke keranjang, tapi tombol Hapus-nya error.',
+        difficulty: 'Sedang', type: 'Debug',
+        brief: '<p><strong>Laporan masalah:</strong> Produk baru berhasil masuk ke daftar keranjang, tapi begitu tombol "Hapus" pada item tersebut diklik, tidak terjadi apa-apa (bahkan muncul error).</p><ul><li>Perhatikan jenis fungsi yang dipakai pada listener tombol Hapus, dan nilai <code>this</code> di dalamnya.</li><li>Kamu boleh mengubah cara listener tombol Hapus ditulis, asal hasil akhirnya tetap benar.</li><li>Item yang dihapus harus benar-benar hilang dari daftar dan dari jumlah keranjang.</li></ul>',
+        starter: "const tombolProduk = document.querySelectorAll('.btn-add');\nconst cartList = document.getElementById('cart-list');\nconst cartCount = document.getElementById('cart-count');\nlet totalItem = 0;\n\ntombolProduk.forEach(function (tombol) {\n  tombol.addEventListener('click', function () {\n    const nama = tombol.dataset.name;\n    const li = document.createElement('li');\n    li.innerHTML = '<span>' + nama + '</span> <button class=\"hapus-btn\">Hapus</button>';\n    cartList.appendChild(li);\n\n    const tombolHapus = li.querySelector('.hapus-btn');\n    tombolHapus.addEventListener('click', () => {\n      this.closest('li').remove();\n      totalItem--;\n      cartCount.textContent = totalItem + ' item';\n    });\n\n    totalItem++;\n    cartCount.textContent = totalItem + ' item';\n  });\n});\n",
+        tests: [
+          { name: 'Menambah 1 produk membuat daftar keranjang berisi 1 baris', run: function (doc) { doc.querySelector('.btn-add').click(); return doc.querySelectorAll('#cart-list li').length === 1; } },
+          { name: 'Tombol Hapus pada item berhasil menghapus baris tersebut (tanpa error)', run: function (doc, win) { const li = doc.querySelector('#cart-list li'); const hapusBtn = li.querySelector('.hapus-btn'); hapusBtn.click(); return !win.__error && doc.querySelectorAll('#cart-list li').length === 0; } },
+          { name: 'Jumlah keranjang kembali menjadi "0 item" setelah dihapus', run: function (doc) { return doc.getElementById('cart-count').textContent.trim() === '0 item'; } }
+        ]
+      },
+      {
+        title: 'Kasus 05 — Total Harga Tidak Sinkron',
+        subtitle: 'Total harga tidak pernah berubah dari Rp0.',
+        difficulty: 'Sedang', type: 'Bangun Fitur',
+        brief: '<p><strong>Laporan masalah:</strong> Produk yang ditambahkan sudah muncul di daftar keranjang, tapi total harga di bagian bawah tidak pernah berubah dari <code>Rp0</code>.</p><ul><li>Lengkapi fungsi <code>hitungTotal()</code> yang masih kosong.</li><li>Gunakan array <code>items</code> yang sudah menyimpan setiap harga yang ditambahkan.</li><li>Tampilkan hasilnya melalui <code>formatRupiah()</code> yang sudah tersedia.</li></ul>',
+        starter: "const tombolProduk = document.querySelectorAll('.btn-add');\nconst cartList = document.getElementById('cart-list');\nconst cartTotal = document.getElementById('cart-total');\nlet items = [];\n\nfunction formatRupiah(angka) {\n  return 'Rp' + angka.toLocaleString('id-ID');\n}\n\nfunction hitungTotal() {\n  // TODO: jumlahkan seluruh harga di dalam array items,\n  // lalu tampilkan hasilnya ke cartTotal.textContent\n  // menggunakan formatRupiah()\n}\n\ntombolProduk.forEach(function (tombol) {\n  tombol.addEventListener('click', function () {\n    const nama = tombol.dataset.name;\n    const harga = Number(tombol.dataset.price);\n    items.push(harga);\n\n    const li = document.createElement('li');\n    li.textContent = nama + ' - ' + formatRupiah(harga);\n    cartList.appendChild(li);\n\n    hitungTotal();\n  });\n});\n",
+        tests: [
+          { name: 'Menambah Kopi Susu menghasilkan total "Rp18.000"', run: function (doc) { doc.querySelectorAll('.btn-add')[0].click(); return doc.getElementById('cart-total').textContent.trim() === 'Rp18.000'; } },
+          { name: 'Menambah Roti Bakar menghasilkan total "Rp33.000"', run: function (doc) { doc.querySelectorAll('.btn-add')[1].click(); return doc.getElementById('cart-total').textContent.trim() === 'Rp33.000'; } }
+        ]
+      },
+      {
+        title: 'Kasus 06 — Tombol Checkout Aktif Padahal Keranjang Kosong',
+        subtitle: 'Checkout selalu bisa diklik dan jumlah item terlihat aneh.',
+        difficulty: 'Sulit', type: 'Debug',
+        brief: '<p><strong>Laporan masalah:</strong> Tombol Checkout selalu bisa diklik, bahkan saat keranjang benar-benar kosong. Jumlah item pada keranjang juga terlihat aneh setelah menambah lebih dari satu produk.</p><ul><li>Ada lebih dari satu penyebab pada kasus ini.</li><li>Periksa nilai awal properti <code>disabled</code> pada tombol Checkout.</li><li>Periksa dengan sangat teliti syarat (kondisi) yang menentukan status Checkout — operator yang dipakai bisa jadi bukan operator perbandingan.</li></ul>',
+        starter: "const tombolProduk = document.querySelectorAll('.btn-add');\nconst cartList = document.getElementById('cart-list');\nconst cartCount = document.getElementById('cart-count');\nconst checkoutBtn = document.getElementById('checkout-btn');\nlet items = [];\n\ncheckoutBtn.disabled = false;\n\nfunction perbaruiStatusCheckout() {\n  if (items.length = 0) {\n    checkoutBtn.disabled = true;\n  } else {\n    checkoutBtn.disabled = false;\n  }\n}\n\nfunction tambahItem(nama, harga) {\n  const itemBaru = { nama: nama, harga: harga };\n  items.push(itemBaru);\n\n  const li = document.createElement('li');\n  li.innerHTML = '<span>' + nama + '</span> <button class=\"hapus-btn\">Hapus</button>';\n  cartList.appendChild(li);\n\n  li.querySelector('.hapus-btn').addEventListener('click', function () {\n    li.remove();\n    items = items.filter(function (it) { return it !== itemBaru; });\n    cartCount.textContent = items.length + ' item';\n    perbaruiStatusCheckout();\n  });\n\n  cartCount.textContent = items.length + ' item';\n  perbaruiStatusCheckout();\n}\n\ntombolProduk.forEach(function (tombol) {\n  tombol.addEventListener('click', function () {\n    tambahItem(tombol.dataset.name, Number(tombol.dataset.price));\n  });\n});\n",
+        tests: [
+          { name: 'Checkout nonaktif ketika keranjang masih kosong', run: function (doc) { return doc.getElementById('checkout-btn').disabled === true; } },
+          { name: 'Menambah 2 produk menampilkan jumlah "2 item"', run: function (doc) { const btns = doc.querySelectorAll('.btn-add'); btns[0].click(); btns[1].click(); return doc.getElementById('cart-count').textContent.trim() === '2 item'; } },
+          { name: 'Checkout aktif ketika keranjang berisi produk', run: function (doc) { return doc.getElementById('checkout-btn').disabled === false; } },
+          { name: 'Menghapus seluruh produk membuat Checkout nonaktif kembali', run: function (doc) { doc.querySelectorAll('#cart-list .hapus-btn').forEach(function (b) { b.click(); }); return doc.getElementById('checkout-btn').disabled === true; } }
+        ]
+      },
+      {
+        title: 'Kasus 07 — Diskon Kupon Tidak Diterapkan ke Total',
+        subtitle: 'Kupon kadang tidak terbaca dan diskon hilang saat belanja lagi.',
+        difficulty: 'Final', type: 'Campuran',
+        brief: '<p><strong>Laporan masalah:</strong> Kupon <code>HEMAT10</code> kadang tidak terbaca meski peserta yakin sudah mengetik dengan benar. Selain itu, diskon yang sempat berhasil diterapkan hilang begitu saja saat pelanggan menambah produk baru ke keranjang.</p><ul><li>Kode kupon perlu tetap terbaca walau ada huruf kecil atau spasi berlebih.</li><li>Diskon harus tersimpan sebagai status, bukan hanya perhitungan sekali pakai saat submit.</li><li>Total harga harus selalu memperhitungkan diskon setiap kali keranjang berubah.</li></ul>',
+        starter: "const tombolProduk = document.querySelectorAll('.btn-add');\nconst cartList = document.getElementById('cart-list');\nconst cartTotal = document.getElementById('cart-total');\nconst promoForm = document.getElementById('promo-form');\nconst promoInput = document.getElementById('promo-input');\nconst promoMessage = document.getElementById('promo-message');\n\nlet items = [];\n\nfunction formatRupiah(angka) {\n  return 'Rp' + angka.toLocaleString('id-ID');\n}\n\nfunction hitungSubtotal() {\n  return items.reduce(function (jumlah, item) { return jumlah + item.harga; }, 0);\n}\n\nfunction perbaruiTotal() {\n  cartTotal.textContent = formatRupiah(hitungSubtotal());\n}\n\ntombolProduk.forEach(function (tombol) {\n  tombol.addEventListener('click', function () {\n    const nama = tombol.dataset.name;\n    const harga = Number(tombol.dataset.price);\n    items.push({ nama: nama, harga: harga });\n\n    const li = document.createElement('li');\n    li.textContent = nama + ' - ' + formatRupiah(harga);\n    cartList.appendChild(li);\n\n    perbaruiTotal();\n  });\n});\n\npromoForm.addEventListener('submit', function (e) {\n  e.preventDefault();\n\n  if (promoInput.value === 'HEMAT10') {\n    const subtotal = hitungSubtotal();\n    const totalDiskon = subtotal - subtotal * 0.1;\n    cartTotal.textContent = formatRupiah(totalDiskon);\n    promoMessage.textContent = 'Kupon berhasil diterapkan!';\n  } else {\n    promoMessage.textContent = 'Kode promo tidak ditemukan.';\n  }\n});\n",
+        tests: [
+          { name: 'Menambah Kopi Susu menampilkan total "Rp18.000"', run: function (doc) { doc.querySelectorAll('.btn-add')[0].click(); return doc.getElementById('cart-total').textContent.trim() === 'Rp18.000'; } },
+          { name: 'Kode promo " hemat10 " (huruf kecil & spasi) tetap dianggap valid', run: function (doc, win) { const input = doc.getElementById('promo-input'); input.value = ' hemat10 '; const form = doc.getElementById('promo-form'); const evt = new win.Event('submit', { bubbles: true, cancelable: true }); form.dispatchEvent(evt); return doc.getElementById('promo-message').textContent.trim() === 'Kupon berhasil diterapkan!'; } },
+          { name: 'Total setelah kupon menjadi "Rp16.200" (diskon 10%)', run: function (doc) { return doc.getElementById('cart-total').textContent.trim() === 'Rp16.200'; } },
+          { name: 'Menambah Roti Bakar setelah kupon tetap mempertahankan diskon ("Rp29.700")', run: function (doc) { doc.querySelectorAll('.btn-add')[1].click(); return doc.getElementById('cart-total').textContent.trim() === 'Rp29.700'; } }
+        ]
+      }
+    ];
+
+    const KEY = 'jsEventListenerIndividuKedaiKitaV1'; let current = 0; let state = { identity: {}, answers: missions.map(m => m.starter), diagnoses: missions.map(() => ''), done: missions.map(() => false), results: missions.map(() => null), reflection1: '', reflection2: '', conclusion: '' };
+    const $ = id => document.getElementById(id);
+    function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
+    function load() {
+      try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved) { state = { ...state, ...saved }; state.answers = missions.map((m, i) => saved.answers?.[i] ?? m.starter); state.diagnoses = missions.map((_, i) => saved.diagnoses?.[i] ?? ''); state.done = missions.map((_, i) => !!saved.done?.[i]); state.results = missions.map((_, i) => saved.results?.[i] ?? null) } } catch (e) { }
+      const d = new Date(); $('dateInput').value = state.identity.date || `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      if (state.identity.name) { fillIdentityForm(); $('identityOverlay').classList.add('hidden') }
+      renderAll();
+    }
+    function save() { state.reflection1 = $('reflection1').value; state.reflection2 = $('reflection2').value; state.conclusion = $('conclusion').value; localStorage.setItem(KEY, JSON.stringify(state)) }
+    function fillIdentityForm() { $('nameInput').value = state.identity.name || ''; $('schoolInput').value = state.identity.school || ''; $('dateInput').value = state.identity.date || $('dateInput').value }
+    function renderAll() { renderNav(); renderMission(); renderTeam(); renderProgress(); $('reflection1').value = state.reflection1 || ''; $('reflection2').value = state.reflection2 || ''; $('conclusion').value = state.conclusion || '' }
+    function renderTeam() { const i = state.identity; $('teamName').textContent = i.name || 'Belum diisi'; $('teamMembers').textContent = i.school || '—' }
+    function renderNav() { const nav = $('questionNav'); nav.innerHTML = ''; missions.forEach((m, i) => { const b = document.createElement('button'); b.className = `nav-item ${i === current ? 'active' : ''} ${state.done[i] ? 'done' : ''}`; b.innerHTML = `<span class="nav-num">${state.done[i] ? '✓' : i + 1}</span><span>${esc(m.title)}</span><span class="nav-check">${state.done[i] ? '✓' : ''}</span>`; b.onclick = () => go(i); nav.appendChild(b) }) }
+    function diffClass(d) { if (d === 'Sedang') return 'medium'; if (d === 'Sulit' || d === 'Final') return 'hard'; return ''; }
+    function renderMission() { const m = missions[current]; $('qNumber').textContent = `Misi ${current + 1} dari ${missions.length}`; $('qDifficulty').textContent = m.difficulty; $('qDifficulty').className = `badge ${diffClass(m.difficulty)}`; $('qType').textContent = m.type; $('qTitle').textContent = m.title; $('qSubtitle').textContent = m.subtitle; $('qBrief').innerHTML = m.brief; $('editor').value = state.answers[current]; $('diagnosis').value = state.diagnoses[current] || ''; $('prevButton').disabled = current === 0; $('nextButton').disabled = current === missions.length - 1; renderResult(state.results[current]); renderTeam(); loadFrame(state.answers[current]); }
+    function renderProgress() { const n = state.done.filter(Boolean).length; $('progressText').textContent = `${n} / ${missions.length} selesai`; $('progressBar').style.width = `${n / missions.length * 100}%` }
+    function go(i) { capture(); current = i; renderAll(); scrollTo({ top: 0, behavior: 'smooth' }) }
+    function capture() { state.answers[current] = $('editor').value; state.diagnoses[current] = $('diagnosis').value; save() }
+    async function check(onlyRun) {
+      capture();
+      const m = missions[current];
+      const frame = await loadFrame(state.answers[current]);
+      const win = frame.contentWindow, doc = frame.contentDocument;
+      if (onlyRun) {
+        state.results[current] = { only: true, error: win.__error, logs: win.__logs || [] };
+        renderResult(state.results[current]); save(); return;
+      }
+      const rows = m.tests.map(function (t) {
+        let pass = false;
+        try { pass = !!t.run(doc, win) && !win.__error; } catch (e) { pass = false; }
+        return { name: t.name, pass: pass };
+      });
+      const passed = rows.every(x => x.pass);
+      state.done[current] = passed;
+      state.results[current] = { passed: passed, rows: rows, error: win.__error, logs: win.__logs || [] };
+      save(); renderAll();
+      toast(passed ? 'Semua pengujian berhasil!' : 'Masih ada bagian yang perlu diperbaiki.');
+    }
+    function renderResult(res) {
+      const box = $('resultBox');
+      if (!res) { box.className = 'result'; box.innerHTML = ''; return }
+      if (res.only) { box.className = `result show ${res.error ? 'fail' : 'pass'}`; box.innerHTML = `<h3>${res.error ? 'Kode belum dapat dijalankan' : 'Kode berhasil dijalankan di pratinjau'}</h3>${res.error ? `<div>${esc(res.error)}</div>` : ''}<div class="console">${esc((res.logs || []).join('\n') || 'Tidak ada console.log(). Periksa hasilnya langsung di pratinjau Kedai Kita.')}</div>`; return }
+      box.className = `result show ${res.passed ? 'pass' : 'fail'}`;
+      box.innerHTML = `<h3>${res.passed ? '✓ Misi selesai' : 'Periksa kembali kode perbaikanmu'}</h3>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : ''}${(res.rows || []).map(x => `<div class="test-row"><span class="test-icon">${x.pass ? '✓' : '×'}</span><span>${esc(x.name)}</span></div>`).join('')}<div class="console">${esc((res.logs || []).join('\n') || 'Tidak ada output console.log().')}</div>`;
+    }
+    function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); setTimeout(() => $('toast').classList.remove('show'), 1800) }
+    function buildPrint() {
+      capture();
+      const i = state.identity; const score = state.done.filter(Boolean).length * Math.round(100 / missions.length);
+      $('printReport').innerHTML = `<div class="print-cover"><h1>Event Listener Challenge Individu — Kedai Kita</h1><p>Laporan pengerjaan misi individu</p><div class="print-meta"><div><strong>Nama:</strong> ${esc(i.name)}</div><div><strong>Tanggal:</strong> ${esc(i.date)}</div><div><strong>Sekolah/Kelas:</strong> ${esc(i.school)}</div><div><strong>Skor:</strong> ${score}/100</div></div></div>${missions.map((m, n) => `<div class="print-section"><h2>${n + 1}. ${esc(m.title)}</h2><h3 class="print-status ${state.done[n] ? 'print-pass' : 'print-fail'}">${state.done[n] ? '✓ Lulus pengujian' : '× Belum lulus pengujian'}</h3><div class="print-code">${esc(state.answers[n])}</div><h3 style="margin-top:9px">Diagnosis / Rencana Peserta</h3><div class="print-reflection">${esc(state.diagnoses[n] || 'Belum diisi')}</div></div>`).join('')}<div class="print-section"><h2>Refleksi Individu</h2><h3>Strategi debugging / pengembangan</h3><div class="print-reflection">${esc(state.reflection1 || 'Belum diisi')}</div><h3>Konsep paling menantang</h3><div class="print-reflection">${esc(state.reflection2 || 'Belum diisi')}</div><h3>Kesimpulan</h3><div class="print-reflection">${esc(state.conclusion || 'Belum diisi')}</div></div>`;
+    }
+    $('identityForm').addEventListener('submit', function (e) { e.preventDefault(); state.identity = { name: $('nameInput').value.trim(), school: $('schoolInput').value.trim(), date: $('dateInput').value }; save(); $('identityOverlay').classList.add('hidden'); renderTeam(); });
+    $('editIdentity').addEventListener('click', function () { fillIdentityForm(); $('identityOverlay').classList.remove('hidden'); });
+    $('resetButton').addEventListener('click', function () { state.answers[current] = missions[current].starter; state.results[current] = null; $('editor').value = state.answers[current]; renderResult(null); save(); loadFrame(state.answers[current]); });
+    $('runOnlyButton').addEventListener('click', function () { check(true); });
+    $('checkButton').addEventListener('click', function () { check(false); });
+    $('prevButton').addEventListener('click', function () { if (current > 0) go(current - 1); });
+    $('nextButton').addEventListener('click', function () { if (current < missions.length - 1) go(current + 1); });
+    $('printButton').addEventListener('click', function () { buildPrint(); setTimeout(() => window.print(), 50); });
+    ['reflection1', 'reflection2', 'conclusion'].forEach(id => $(id).addEventListener('input', save));
+    load();
+  </script>
+</body>
+
+</html>
