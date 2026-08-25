@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Modul DOM 02 — Event Listener</title>
+  <style>
+    :root {
+      --ink: #2c2c2b;
+      --muted: #6f6d68;
+      --canvas: #fff;
+      --soft: #f9f8f7;
+      --surface: #f0efed;
+      --line: #e6e5e3;
+      --blue: #2783de;
+      --blue-soft: #e5f2fc;
+      --green: #31875f;
+      --green-soft: #e8f1ec;
+      --orange: #b76a2d;
+      --orange-soft: #fbebde;
+      --red: #d44f45;
+      --red-soft: #fce9e7;
+      --code: #202124;
+      --radius: 10px
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--soft);
+      color: var(--ink);
+      font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .topbar-in {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px
+    }
+
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 13px;
+      flex: none
+    }
+
+    .brand {
+      font-weight: 750;
+      font-size: 15px;
+      line-height: 1.25
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 12.5px
+    }
+
+    .top-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .prog {
+      display: flex;
+      align-items: center;
+      gap: 9px
+    }
+
+    .prog-text {
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-weight: 650
+    }
+
+    .prog-track {
+      width: 110px;
+      height: 7px;
+      border-radius: 99px;
+      background: var(--surface);
+      overflow: hidden
+    }
+
+    .prog-bar {
+      height: 100%;
+      width: 0;
+      background: var(--green);
+      border-radius: 99px;
+      transition: width .3s
+    }
+
+    .subnav {
+      position: sticky;
+      top: 59px;
+      z-index: 29;
+      background: var(--soft);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .subnav-in {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto
+    }
+
+    .subnav a {
+      padding: 11px 13px;
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap
+    }
+
+    .subnav a:hover {
+      color: var(--ink)
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 72px
+    }
+
+    section {
+      scroll-margin-top: 112px
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700
+    }
+
+    h1 {
+      font-size: 32px;
+      line-height: 1.14;
+      letter-spacing: -.02em;
+      margin: 7px 0 10px
+    }
+
+    h2.sec {
+      font-size: 24px;
+      letter-spacing: -.01em;
+      margin: 44px 0 14px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    h3 {
+      font-size: 17.5px;
+      margin: 26px 0 8px
+    }
+
+    h4 {
+      font-size: 15px;
+      margin: 18px 0 6px
+    }
+
+    p {
+      margin: 0 0 12px
+    }
+
+    .lede {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 620px
+    }
+
+    .card {
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin: 0 0 18px
+    }
+
+    .goal {
+      background: var(--blue-soft);
+      border: 1px solid #cbe4f8;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 22px 0 8px
+    }
+
+    .goal h3 {
+      margin: 0 0 8px;
+      font-size: 16px
+    }
+
+    .goal ol {
+      margin: 0;
+      padding-left: 20px
+    }
+
+    .goal li {
+      margin: 6px 0
+    }
+
+    code {
+      background: var(--surface);
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .9em
+    }
+
+    pre {
+      margin: 0 0 12px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--code);
+      color: #e8eaed;
+      overflow-x: auto;
+      font: 13.5px/1.6 Consolas, "Courier New", monospace
+    }
+
+    pre.plain {
+      background: var(--surface);
+      color: var(--ink)
+    }
+
+    pre.tree {
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.75
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      margin: 0 0 14px
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top
+    }
+
+    th {
+      font-size: 12px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0
+    }
+
+    .callout {
+      border-radius: 9px;
+      padding: 14px 16px;
+      margin: 0 0 14px;
+      font-size: 15px;
+      border: 1px solid
+    }
+
+    .callout.info {
+      background: var(--blue-soft);
+      border-color: #cbe4f8
+    }
+
+    .callout.warn {
+      background: var(--orange-soft);
+      border-color: #f0d4bb
+    }
+
+    .callout.bad {
+      background: var(--red-soft);
+      border-color: #efc4c0
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 3px
+    }
+
+    ul.tight {
+      margin: 0 0 12px;
+      padding-left: 22px
+    }
+
+    ul.tight li {
+      margin: 5px 0
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px
+    }
+
+    .compare>div {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 14px 16px
+    }
+
+    .compare h4 {
+      margin: 0 0 7px;
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    .compare p {
+      margin: 0;
+      font-size: 14.5px
+    }
+
+    .ex {
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin: 0 0 22px;
+      overflow: hidden
+    }
+
+    .ex-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft)
+    }
+
+    .ex-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 7px;
+      flex-wrap: wrap
+    }
+
+    .badge {
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 750;
+      background: var(--blue-soft);
+      color: #155f9f
+    }
+
+    .badge.task {
+      background: var(--orange-soft);
+      color: #85501f
+    }
+
+    .badge.ok {
+      background: var(--green-soft);
+      color: #1f6644
+    }
+
+    .ex-head h3 {
+      margin: 0 0 4px;
+      font-size: 19px
+    }
+
+    .ex-head .target {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14.5px
+    }
+
+    .ex-body {
+      padding: 20px 22px
+    }
+
+    .ex-body>p:first-child {
+      margin-top: 0
+    }
+
+    details {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 14px;
+      margin: 0 0 14px
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 14.5px
+    }
+
+    details pre {
+      margin: 12px 0 2px
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 16px 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .label .btns {
+      margin-left: auto;
+      display: flex;
+      gap: 7px
+    }
+
+    textarea.editor {
+      width: 100%;
+      min-height: 190px;
+      background: var(--code);
+      color: #e8eaed;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font: 13.5px/1.7 Consolas, "Courier New", monospace;
+      resize: vertical;
+      tab-size: 2
+    }
+
+    textarea.editor:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .4);
+      outline-offset: 1px
+    }
+
+    textarea.note {
+      width: 100%;
+      min-height: 76px;
+      background: var(--canvas);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 13px;
+      font: 15px/1.6 inherit;
+      resize: vertical
+    }
+
+    textarea.note:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 1px
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: var(--canvas);
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 38px;
+      padding: 8px 13px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: var(--surface)
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 2px
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff
+    }
+
+    .btn.primary:hover {
+      background: #1f6fc0
+    }
+
+    .btn.big {
+      min-height: 44px;
+      padding: 11px 20px;
+      font-size: 15px
+    }
+
+    .frame-wrap {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+      background: var(--canvas);
+      min-height: 150px;
+      position: relative;
+    }
+
+    .frame-wrap iframe {
+      width: 100%;
+      height: 230px;
+      border: 0;
+      display: block;
+      background: #fff
+    }
+
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 6px 0 0
+    }
+
+    .result {
+      display: none;
+      margin-top: 14px;
+      border-radius: 9px;
+      padding: 14px 16px;
+      border: 1px solid
+    }
+
+    .result.show {
+      display: block
+    }
+
+    .result.pass {
+      background: var(--green-soft);
+      border-color: #bddbc9
+    }
+
+    .result.fail {
+      background: var(--red-soft);
+      border-color: #efc4c0
+    }
+
+    .result h4 {
+      margin: 0 0 8px;
+      font-size: 15px
+    }
+
+    .test-row {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      font-size: 14.5px;
+      margin: 4px 0
+    }
+
+    .test-icon {
+      font-weight: 800;
+      width: 15px;
+      flex: none
+    }
+
+    .console {
+      margin-top: 10px;
+      background: var(--code);
+      color: #e8eaed;
+      border-radius: 7px;
+      padding: 10px 13px;
+      font: 12.5px/1.6 Consolas, "Courier New", monospace;
+      white-space: pre-wrap;
+      max-height: 150px;
+      overflow: auto
+    }
+
+    .ident {
+      display: grid;
+      grid-template-columns: 1fr 1fr 170px;
+      gap: 12px
+    }
+
+    .ident label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px
+    }
+
+    .ident input {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font: inherit;
+      background: var(--canvas)
+    }
+
+    .ident input:focus-visible {
+      outline: 3px solid rgba(39, 131, 222, .28);
+      outline-offset: 1px
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(14px);
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 9px;
+      font-size: 14.5px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 50
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%)
+    }
+
+    #printReport {
+      display: none
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 13.5px;
+      text-align: center;
+      margin-top: 40px
+    }
+
+    @media(max-width:760px) {
+      .compare {
+        grid-template-columns: 1fr
+      }
+
+      .ident {
+        grid-template-columns: 1fr
+      }
+
+      .topbar-in,
+      .subnav-in,
+      .wrap {
+        padding-left: 16px;
+        padding-right: 16px
+      }
+
+      h1 {
+        font-size: 26px
+      }
+
+      .prog-track {
+        width: 70px
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 14mm
+      }
+
+      body {
+        background: #fff;
+        font-size: 10.5pt
+      }
+
+      .topbar,
+      .subnav,
+      .wrap,
+      .toast {
+        display: none !important
+      }
+
+      #printReport {
+        display: block
+      }
+
+      .print-cover {
+        border-bottom: 2px solid #2c2c2b;
+        padding-bottom: 12px;
+        margin-bottom: 16px
+      }
+
+      .print-cover h1 {
+        font-size: 19pt;
+        margin: 0 0 4px
+      }
+
+      .print-cover p {
+        color: #555;
+        margin: 0
+      }
+
+      .print-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px 20px;
+        margin-top: 12px;
+        font-size: 10pt
+      }
+
+      .print-section {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 12px 14px;
+        margin-bottom: 12px
+      }
+
+      .print-section h2 {
+        font-size: 12.5pt;
+        margin: 0 0 6px
+      }
+
+      .print-section h3 {
+        font-size: 9.5pt;
+        margin: 10px 0 4px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #555
+      }
+
+      .print-code {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 10px;
+        font: 8.6pt/1.5 Consolas, monospace;
+        white-space: pre-wrap
+      }
+
+      .print-reflection {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px 10px;
+        min-height: 34px;
+        font-size: 10pt
+      }
+
+      .print-status {
+        font-weight: 800
+      }
+
+      .print-pass {
+        color: #1f6644
+      }
+
+      .print-fail {
+        color: #a5352c
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="logo">DOM</div>
+      <div class="brand">Modul DOM 02<small>Event Listener • Aksi &amp; Reaksi di Halaman Web</small></div>
+      <div class="top-right">
+        <div class="prog">
+          <span class="prog-text" id="progressText">0 / 5 selesai</span>
+          <div class="prog-track">
+            <div class="prog-bar" id="progressBar"></div>
+          </div>
+        </div>
+        <button class="btn" id="printButton">⎙ Cetak / Simpan PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="subnav">
+    <div class="subnav-in">
+      <a href="#materi">Materi</a>
+      <a href="#praktikum">Praktikum</a>
+      <a href="#tugas">Tugas</a>
+      <a href="#laporan">Pengumpulan</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+
+    <section id="materi">
+      <div class="eyebrow">Manipulasi Lanjut • Hari 3 dari 4</div>
+      <h1>Menghidupkan halaman dengan aksi pengguna.</h1>
+      <p class="lede">Halamanmu sudah bisa diubah oleh JavaScript. Sekarang, kita akan menentukan <strong>kapan</strong>
+        perubahan itu terjadi. Di sinilah Event Listener berperan untuk mendengarkan setiap ketikan, klik, atau
+        pergerakan dari pengguna.</p>
+
+      <div class="goal">
+        <h3>Tujuan pembelajaran</h3>
+        <ol>
+          <li>Memahami konsep <em>event</em> (kejadian) pada JavaScript.</li>
+          <li>Menggunakan <code>addEventListener</code> untuk menjalankan fungsi saat tombol diklik.</li>
+          <li>Menggunakan <code>e.preventDefault()</code> untuk mencegah form me-<em>refresh</em> halaman.</li>
+          <li>Menggabungkan materi Modul 1 dan 1b ke dalam sebuah blok Event Listener.</li>
+        </ol>
+      </div>
+
+      <h2 class="sec">1. Apa itu Event Listener?</h2>
+      <p>Event Listener ibarat seorang "penjaga" yang kamu tugaskan untuk mengawasi sebuah elemen HTML. Kamu memberinya
+        dua perintah: <em>"Tunggu sampai kejadian X terjadi, lalu lakukan tugas Y."</em></p>
+      <pre>const tombol = document.querySelector("#btnSapa");
+
+tombol.addEventListener("click", function() {
+  // Semua kode di dalam blok ini HANYA akan berjalan 
+  // SETELAH tombol tersebut diklik oleh pengguna.
+  console.log("Halo!");
+});</pre>
+
+      <div class="callout bad"><strong>Kesalahan Fatal Pemula</strong>Jangan pernah memanggil nama fungsi dengan tanda
+        kurung di dalam addEventListener seperti
+        ini:<br><br><code>tombol.addEventListener("click", sapaPengguna());</code> ❌<br><br>Itu akan membuat fungsinya
+        langsung berjalan saat halaman dimuat, bukan menunggu diklik. Tulis format function kosong
+        <code>function() { ... }</code> seperti contoh pertama.
+      </div>
+
+      <h2 class="sec">2. Menghentikan Refresh Otomatis (Prevent Default)</h2>
+      <p>Secara bawaan (default), jika kamu menaruh elemen <code>&lt;button&gt;</code> di dalam sebuah
+        <code>&lt;form&gt;</code>, browser akan menganggapnya sebagai tombol Submit yang akan me-<em>refresh</em>
+        (memuat ulang) seluruh halaman. Jika halaman me-refresh, seluruh modifikasi JavaScript yang kamu buat akan
+        hilang dan kembali ke awal.
+      </p>
+      <p>Solusinya adalah mencegat aksi bawaan tersebut dengan objek <code>event</code> (biasa disingkat
+        <code>e</code>):
+      </p>
+      <pre>const form = document.querySelector("#formTugas");
+
+// Perhatikan huruf "e" di dalam kurung function
+form.addEventListener("submit", function(e) {
+  
+  // Baris ajaib ini menghentikan refresh halaman
+  e.preventDefault(); 
+  
+  console.log("Form disubmit, halaman aman!");
+});</pre>
+
+      <h2 class="sec">3. Merangkai Semuanya Menjadi Satu</h2>
+      <p>Di Modul 1b, kamu sudah belajar mengambil isi form dan membuat tag baru. Sekarang, kita cukup memindahkan kode
+        tersebut ke dalam Event Listener, sehingga aplikasi seperti "To-Do List" akan bekerja dengan utuh.</p>
+      <pre>const btnTambah = document.querySelector("#btn");
+const inputData = document.querySelector("#input");
+const daftar = document.querySelector("#list");
+
+btnTambah.addEventListener("click", function() {
+  // 1. Ambil ketikan (Materi Modul 1b)
+  const namaTugas = inputData.value;
+  
+  // 2. Bikin tag baru (Materi Modul 1b)
+  const tagBaru = document.createElement("li");
+  tagBaru.textContent = namaTugas; // (Materi Modul 1)
+  
+  // 3. Masukkan ke layar (Materi Modul 1b)
+  daftar.append(tagBaru);
+  
+  // 4. Kosongkan kembali form
+  inputData.value = "";
+});</pre>
+    </section>
+
+    <section id="praktikum">
+      <h2 class="sec">Praktikum</h2>
+      <p>Tiga latihan ini dirancang agar kamu terbiasa menulis sintaks <code>addEventListener</code>. Saat menguji,
+        <strong>mesin pemeriksa akan secara otomatis mengeklik elemenmu</strong> seolah-olah ada pengguna sungguhan.
+      </p>
+      <div id="praktikumList"></div>
+    </section>
+
+    <section id="tugas">
+      <h2 class="sec">Tugas</h2>
+      <p>Dua tugas berikut akan menguji pemahamanmu merangkai Modul 1, 1b, dan 2 menjadi fitur interaktif yang utuh.</p>
+      <div id="tugasList"></div>
+    </section>
+
+    <section id="laporan">
+      <h2 class="sec">Pengumpulan</h2>
+      <div class="card">
+        <h3 style="margin-top:0">Identitas peserta</h3>
+        <div class="ident">
+          <div><label for="nameInput">Nama lengkap</label><input id="nameInput" placeholder="Nama lengkapmu"></div>
+          <div><label for="schoolInput">Sekolah / Kelas</label><input id="schoolInput"
+              placeholder="Contoh: SMK X — XI RPL"></div>
+          <div><label for="dateInput">Tanggal</label><input id="dateInput" type="date"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Refleksi</h3>
+        <div class="label" style="margin-top:14px">1. Apa fungsi dari e.preventDefault() pada sebuah form?</div>
+        <textarea class="note" id="reflection1"
+          placeholder="Jelaskan apa dampaknya jika perintah ini tidak ditulis..."></textarea>
+        <div class="label">2. Kesimpulan (3–5 kalimat)</div>
+        <textarea class="note" id="conclusion" style="min-height:110px"
+          placeholder="Tuliskan pemahamanmu tentang Event Listener dan alur programnya."></textarea>
+      </div>
+
+      <div class="card" style="text-align:center">
+        <button class="btn primary big" id="printButton2">⎙ Cetak / Simpan PDF</button>
+      </div>
+    </section>
+
+    <footer>Modul DOM 02 — Event Listener • Progresmu tersimpan otomatis di browser ini.</footer>
+  </div>
+
+  <div id="printReport"></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const BASE_CSS = 'body{font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:#2c2c2b;margin:0;padding:18px;background:#fff}h1,h2,h3{margin:0 0 8px}h2{font-size:19px}p{margin:0 0 8px}ul{padding-left:20px;margin:0 0 8px}li{margin:5px 0}strong{font-weight:750} button, input { font: inherit; }';
+
+    const tasks = [
+      {
+        kind: 'praktikum',
+        title: 'Dasar Event Listener',
+        target: 'Menjalankan perintah HANYA ketika tombol diklik.',
+        brief: 'Pilih tombol <code>#btnSapa</code> dan paragraf <code>#pesan</code>. Tambahkan event listener <code>"click"</code> pada tombol. Saat tombol diklik, ubah <code>textContent</code> paragraf menjadi "Halo dunia!".',
+        experiment: 'Coba langsung tulis perubahan teksnya tanpa dibungkus function (seperti Modul 1). Kamu akan melihat teksnya langsung berubah tanpa menunggu diklik.',
+        question: 'Mengapa kode yang ditaruh di dalam function() { ... } tidak langsung dijalankan oleh browser?',
+        markup: '<button id="btnSapa">Sapa Saya</button>\n<p id="pesan">Teks ini akan berubah saat diklik.</p>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'button{padding:8px 16px;background:#2783de;color:#fff;border:none;border-radius:6px;cursor:pointer}p{margin-top:12px;padding:12px;background:#f9f8f7;border:1px solid #e6e5e3;border-radius:6px}</style></head><body><button id="btnSapa">Sapa Saya</button><p id="pesan">Teks ini akan berubah saat diklik.</p>{{JS}}</body></html>',
+        starter: 'const tombol = document.querySelector("#btnSapa");\nconst pesan = document.querySelector("#pesan");\n\ntombol.addEventListener("click", function() {\n  // tulis perintah mengubah teks di dalam sini\n  \n});\n',
+        tests: [
+          ['Teks tetap sama SEBELUM tombol diklik', c => c.text('#pesan') === 'Teks ini akan berubah saat diklik.'],
+          ['Teks berubah menjadi "Halo dunia!" SETELAH tombol diklik', async c => { c.click('#btnSapa'); await c.wait(50); return c.text('#pesan') === 'Halo dunia!'; }],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'praktikum',
+        title: 'Tombol Counter (Penghitung)',
+        target: 'Mengambil teks angka, menambahnya, lalu menuliskannya kembali saat diklik.',
+        brief: 'Setiap kali <code>#btnTambah</code> diklik, program harus membaca angka yang ada di <code>#angka</code>, mengubahnya menjadi tipe Number, menambahkannya dengan 1, lalu menulisnya kembali ke halaman.',
+        question: 'Apa kegunaan fungsi parseInt() atau Number() pada kasus ini?',
+        markup: '<p>Total klik: <strong id="angka">0</strong></p>\n<button id="btnTambah">Tambah 1</button>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'button{padding:8px 16px;background:#31875f;color:#fff;border:none;border-radius:6px;cursor:pointer}strong{font-size:24px;color:#2783de}</style></head><body><p>Total klik: <strong id="angka">0</strong></p><button id="btnTambah">Tambah 1</button>{{JS}}</body></html>',
+        starter: 'const tombol = document.querySelector("#btnTambah");\nconst angkaEl = document.querySelector("#angka");\n\ntombol.addEventListener("click", function() {\n  // 1. Ambil nilai saat ini dan jadikan angka\n  let nilaiSaatIni = Number(angkaEl.textContent);\n  \n  // 2. Tambah 1\n  nilaiSaatIni = nilaiSaatIni + 1;\n  \n  // 3. Tulis kembali ke elemen angkaEl\n  \n});\n',
+        tests: [
+          ['Angka berubah menjadi 1 setelah diklik 1 kali', async c => { c.click('#btnTambah'); await c.wait(50); return c.text('#angka') === '1'; }],
+          ['Angka bertambah menjadi 3 setelah diklik 2 kali lagi', async c => { c.click('#btnTambah'); c.click('#btnTambah'); await c.wait(50); return c.text('#angka') === '3'; }],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'praktikum',
+        title: 'Mencegah Refresh Form',
+        target: 'Menggunakan e.preventDefault() pada event "submit".',
+        brief: 'Formulir pencarian ini selalu me-refresh halaman jika tombolnya ditekan. Tangkap event <code>"submit"</code> pada form <code>#formCari</code>, cegah refresh dengan <code>e.preventDefault()</code>, dan tulis isi <code>#inputKunci</code> ke <code>#hasilCari</code>.',
+        question: 'Apa nama objek parameter yang disisipkan di dalam function(...) untuk memanggil preventDefault?',
+        markup: '<form id="formCari">\n  <input id="inputKunci" placeholder="Cari...">\n  <button type="submit">Cari</button>\n</form>\n<p id="hasilCari">Hasil akan tampil di sini</p>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'form{display:flex;gap:8px}input{padding:8px;border:1px solid #ccc;border-radius:6px;flex:1}button{padding:8px 16px;background:#2783de;color:#fff;border:none;border-radius:6px;cursor:pointer}p{margin-top:12px;color:#6f6d68}</style></head><body><form id="formCari"><input id="inputKunci" placeholder="Cari..."><button type="submit">Cari</button></form><p id="hasilCari">Hasil akan tampil di sini</p>{{JS}}</body></html>',
+        starter: 'const form = document.querySelector("#formCari");\nconst input = document.querySelector("#inputKunci");\nconst hasil = document.querySelector("#hasilCari");\n\n// Jangan lupa tambahkan parameter "e" di dalam function\nform.addEventListener("submit", function(e) {\n  // 1. Hentikan refresh\n  \n  \n  // 2. Tulis value dari input ke dalam hasil.textContent\n  \n});\n',
+        tests: [
+          ['Hasil pencarian tampil dan halaman tidak me-refresh', async c => {
+            c.q('#inputKunci').value = 'Belajar Javascript';
+            c.submit('#formCari');
+            await c.wait(50);
+            return c.text('#hasilCari') === 'Belajar Javascript';
+          }],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'tugas',
+        title: 'Membuat To-Do List Interaktif',
+        target: 'Menggabungkan .value, createElement, append, dan klik ke dalam satu alur.',
+        brief: 'Lengkapi aplikasi sederhana ini. Ketika <code>#btnSimpan</code> diklik: Ambil teks dari <code>#tugasBaru</code>. Buat elemen <code>li</code>. Isi teksnya dengan data tersebut. Masukkan ke <code>#listTugas</code>. Terakhir, kosongkan lagi form inputnya.',
+        question: 'Sebutkan 3 perintah (methods) DOM yang berbeda yang dipakai di dalam tugas ini.',
+        markup: '<input id="tugasBaru" placeholder="Ketik tugas...">\n<button id="btnSimpan">Simpan</button>\n<ul id="listTugas"></ul>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + 'div.flex{display:flex;gap:8px;margin-bottom:12px}input{flex:1;padding:8px;border:1px solid #ccc;border-radius:6px}button{padding:8px 16px;background:#31875f;color:#fff;border:none;border-radius:6px;cursor:pointer}ul{background:#f9f8f7;padding:16px 16px 16px 36px;border-radius:8px;border:1px solid #e6e5e3}</style></head><body><div class="flex"><input id="tugasBaru" placeholder="Ketik tugas..."><button id="btnSimpan">Simpan</button></div><ul id="listTugas"><li>Belajar DOM</li></ul>{{JS}}</body></html>',
+        starter: 'const btn = document.querySelector("#btnSimpan");\nconst input = document.querySelector("#tugasBaru");\nconst list = document.querySelector("#listTugas");\n\nbtn.addEventListener("click", function() {\n  // Kerjakan secara berurutan di sini\n  \n});\n',
+        tests: [
+          ['Item berhasil ditambahkan setelah diklik', async c => {
+            c.q('#tugasBaru').value = 'Makan Siang';
+            c.click('#btnSimpan');
+            await c.wait(50);
+            return c.all('li').length === 2 && c.all('li')[1].textContent === 'Makan Siang';
+          }],
+          ['Input form dikosongkan kembali setelah berhasil', async c => {
+            return c.q('#tugasBaru').value === '';
+          }],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      },
+      {
+        kind: 'tugas',
+        title: 'Tombol Mode Gelap (Toggle)',
+        target: 'Menggunakan classList.toggle di dalam Event Listener.',
+        brief: 'Klik <code>#btnMode</code> untuk mengubah tampilan layar <code>#kotak</code>. Jika class <code>gelap</code> belum ada di kotak, tambahkan. Jika sudah ada, hilangkan. Gunakan perintah praktis <code>classList.toggle("gelap")</code> di dalam event listener.',
+        question: 'Apa perbedaan toggle dengan perpaduan add dan remove?',
+        markup: '<div id="kotak">\n  <p>Layar Aplikasi</p>\n  <button id="btnMode">Ubah Mode Gelap</button>\n</div>',
+        html: '<!doctype html><html><head><meta charset="utf-8"><style>' + BASE_CSS + '#kotak{padding:20px;border-radius:8px;background:#f9f8f7;color:#2c2c2b;border:1px solid #ccc;transition:0.3s}#kotak.gelap{background:#202124;color:#e8eaed;border-color:#555}button{padding:8px 16px;background:#2783de;color:#fff;border:none;border-radius:6px;cursor:pointer}</style></head><body><div id="kotak"><p>Layar Aplikasi</p><button id="btnMode">Ubah Mode Gelap</button></div>{{JS}}</body></html>',
+        starter: 'const btn = document.querySelector("#btnMode");\nconst kotak = document.querySelector("#kotak");\n\n// Tambahkan event listener "click" pada tombol\n// Di dalamnya, gunakan classList.toggle("gelap") pada kotak\n\n',
+        tests: [
+          ['Class "gelap" berhasil ditambahkan ke kotak saat diklik sekali', async c => {
+            c.click('#btnMode');
+            await c.wait(50);
+            return c.q('#kotak').classList.contains('gelap');
+          }],
+          ['Class "gelap" berhasil hilang jika tombol diklik untuk kedua kalinya', async c => {
+            c.click('#btnMode');
+            await c.wait(50);
+            return !c.q('#kotak').classList.contains('gelap');
+          }],
+          ['Halaman berjalan tanpa error', c => !c.err()]
+        ]
+      }
+    ];
+
+    const KEY = 'domModul02EventListenerV1';
+    let busy = false;
+    let state = { identity: {}, answers: tasks.map(t => t.starter), notes: tasks.map(() => ''), done: tasks.map(() => false), results: tasks.map(() => null), reflection1: '', conclusion: '' };
+    const $ = id => document.getElementById(id);
+    function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])) }
+
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)) } catch (e) { } }
+
+    function load() {
+      try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved) { state = { ...state, ...saved }; state.answers = tasks.map((t, i) => saved.answers?.[i] ?? t.starter); state.notes = tasks.map((_, i) => saved.notes?.[i] ?? ''); state.done = tasks.map((_, i) => !!saved.done?.[i]); state.results = tasks.map((_, i) => saved.results?.[i] ?? null) } } catch (e) { }
+      const d = new Date();
+      $('nameInput').value = state.identity.name || '';
+      $('schoolInput').value = state.identity.school || '';
+      $('dateInput').value = state.identity.date || `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      $('reflection1').value = state.reflection1 || '';
+      $('conclusion').value = state.conclusion || '';
+      buildCards();
+      renderProgress();
+      tasks.forEach((t, i) => { runPreview(i, t, state.answers[i]); renderResult(i) });
+    }
+
+    function cardHtml(t, i) {
+      const isTugas = t.kind === 'tugas';
+      const num = isTugas ? i - 2 : i + 1;
+      const label = isTugas ? `Tugas ${num}` : `Praktikum ${num}`;
+      return `<article class="ex" id="ex-${i}">
+    <div class="ex-head">
+      <div class="ex-meta"><span class="badge ${isTugas ? 'task' : ''}">${label}</span><span class="badge ok" id="dot-${i}" style="display:none">✓ selesai</span></div>
+      <h3>${esc(t.title)}</h3>
+      <p class="target">${esc(t.target)}</p>
+    </div>
+    <div class="ex-body">
+      <p>${t.brief}</p>
+      <details><summary>Struktur HTML halaman</summary><pre class="plain" id="ref-${i}"></pre></details>
+      <div class="label">Kode JavaScript<span class="btns"><button class="btn" id="reset-${i}">Reset</button><button class="btn" id="run-${i}">▶ Jalankan saja</button></span></div>
+      <textarea class="editor" id="ed-${i}" spellcheck="false"></textarea>
+      <div class="label">Pratinjau halaman</div>
+      <div class="frame-wrap" id="pw-${i}"></div>
+      <p class="hint">Panel ini diawasi. Mesin pemeriksa akan "mengeklik" tombolmu secara otomatis untuk menguji hasilnya.</p>
+      <div class="result" id="rs-${i}"></div>
+      <div style="margin-top:16px"><button class="btn primary big" id="check-${i}">Jalankan &amp; Cek</button></div>
+      ${t.experiment ? `<div class="callout info" style="margin-top:18px"><strong>Eksperimen</strong>${t.experiment}</div>` : ''}
+      ${t.question ? `<div class="label">Pertanyaan</div><p class="hint" style="margin:-2px 0 7px">${esc(t.question)}</p><textarea class="note" id="nt-${i}" placeholder="Jawabanmu ikut tercetak di laporan..."></textarea>` : ''}
+    </div>
+  </article>`;
+    }
+
+    function buildCards() {
+      $('praktikumList').innerHTML = tasks.map((t, i) => t.kind === 'praktikum' ? cardHtml(t, i) : '').join('');
+      $('tugasList').innerHTML = tasks.map((t, i) => t.kind === 'tugas' ? cardHtml(t, i) : '').join('');
+      tasks.forEach((t, i) => {
+        $('ref-' + i).textContent = t.markup;
+        $('ed-' + i).value = state.answers[i];
+        if (t.question) $('nt-' + i).value = state.notes[i] || '';
+        $('ed-' + i).addEventListener('input', () => { state.answers[i] = $('ed-' + i).value; save() });
+        $('ed-' + i).addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); const el = e.target, s = el.selectionStart, n = el.selectionEnd; el.value = el.value.slice(0, s) + '  ' + el.value.slice(n); el.selectionStart = el.selectionEnd = s + 2; state.answers[i] = el.value; save() } });
+        if (t.question) $('nt-' + i).addEventListener('input', () => { state.notes[i] = $('nt-' + i).value; save() });
+        $('reset-' + i).onclick = () => { if (confirm('Kembalikan kode latihan ini ke kondisi awal?')) { state.answers[i] = t.starter; state.done[i] = false; state.results[i] = null; $('ed-' + i).value = t.starter; save(); renderProgress(); renderResult(i); runPreview(i, t, t.starter) } };
+        $('run-' + i).onclick = () => check(i, true);
+        $('check-' + i).onclick = () => check(i, false);
+      });
+    }
+
+    function buildDoc(t, code) {
+      const bridge = '<script>window.__logs=[];window.__err=null;(function(){var _l=console.log;console.log=function(){try{window.__logs.push(Array.prototype.slice.call(arguments).map(function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" "))}catch(e){}try{_l.apply(console,arguments)}catch(e){}}})();window.addEventListener("error",function(e){if(!window.__err)window.__err=e.message});<\/script>';
+      const userScript = '<script>try{\n' + code + '\n}catch(e){window.__err=e.message}<\/script>';
+      return t.html.replace('{{JS}}', bridge + userScript);
+    }
+    function runPreview(i, t, code) {
+      return new Promise(resolve => {
+        const wrap = $('pw-' + i); wrap.innerHTML = '';
+        const f = document.createElement('iframe');
+        f.setAttribute('title', 'Pratinjau halaman');
+        const fit = () => { try { const b = f.contentDocument.body; const hh = Math.max(b.scrollHeight, Math.ceil(b.getBoundingClientRect().bottom)); f.style.height = Math.min(560, Math.max(170, hh + 22)) + 'px' } catch (e) { } };
+        f.addEventListener('load', () => { fit(); setTimeout(fit, 90); resolve(f) }, { once: true });
+        wrap.appendChild(f);
+        f.srcdoc = buildDoc(t, code);
+      });
+    }
+    function makeCtx(frame) {
+      const f = frame;
+      const doc = () => f.contentDocument;
+      return {
+        f: f,
+        q: sel => doc().querySelector(sel),
+        all: sel => Array.from(doc().querySelectorAll(sel)),
+        text: sel => { const el = doc().querySelector(sel); return el ? el.textContent.trim() : null },
+        has: (sel, cls) => { const el = doc().querySelector(sel); return !!el && el.classList.contains(cls) },
+        click: sel => { const el = doc().querySelector(sel); if (el) el.click() },
+        submit: sel => { const el = doc().querySelector(sel); if (el) el.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })) },
+        wait: ms => new Promise(r => setTimeout(r, ms || 60)),
+        err() { try { return f.contentWindow.__err || null } catch (e) { return null } },
+        logs() { try { return (f.contentWindow.__logs || []).slice() } catch (e) { return [] } }
+      };
+    }
+    async function check(i, onlyRun) {
+      if (busy) return; busy = true;
+      const btn = $('check-' + i); const label = btn.textContent;
+      btn.disabled = true; $('run-' + i).disabled = true; btn.textContent = 'Menguji…';
+      try {
+        state.answers[i] = $('ed-' + i).value;
+        const t = tasks[i]; const code = state.answers[i];
+        const f = await runPreview(i, t, code);
+        const ctx = makeCtx(f);
+        await ctx.wait(120); // wait for initial render
+        if (onlyRun) {
+          state.results[i] = { only: true, error: ctx.err(), logs: ctx.logs() };
+          save(); renderResult(i); return;
+        }
+        const rows = [];
+        for (const [name, fn] of t.tests) { let pass = false; try { pass = !!await fn(ctx) } catch (e) { pass = false } rows.push({ name, pass }) }
+        const passed = rows.every(x => x.pass);
+        state.done[i] = passed;
+        state.results[i] = { passed, rows, error: ctx.err(), logs: ctx.logs() };
+        save(); renderProgress(); renderResult(i);
+        toast(passed ? (t.kind === 'tugas' ? 'Tugas selesai!' : 'Praktikum selesai!') : 'Belum sesuai — periksa hasilnya.');
+      } finally {
+        busy = false; btn.disabled = false; $('run-' + i).disabled = false; btn.textContent = label;
+      }
+    }
+    function renderResult(i) {
+      const res = state.results[i]; const box = $('rs-' + i); const dot = $('dot-' + i);
+      if (dot) dot.style.display = state.done[i] ? 'inline-block' : 'none';
+      if (!box) return;
+      if (!res) { box.className = 'result'; box.innerHTML = ''; return }
+      const consoleText = res.logs && res.logs.length ? res.logs.join('\n') : 'Tidak ada output console.log().';
+      if (res.only) {
+        box.className = `result show ${res.error ? 'fail' : 'pass'}`;
+        box.innerHTML = `<h4>${res.error ? 'Halaman memunculkan error' : 'Kode berhasil dijalankan'}</h4>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : '<div class="test-row"><span>Cek hasilnya di atas. Kamu bisa mengeklik tombolnya secara manual.</span></div>'}<div class="console">${esc(consoleText)}</div>`;
+        return;
+      }
+      box.className = `result show ${res.passed ? 'pass' : 'fail'}`;
+      box.innerHTML = `<h4>${res.passed ? '✓ Semua pengujian berhasil' : 'Periksa kembali kodemu'}</h4>${res.error ? `<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>` : ''}${(res.rows || []).map(x => `<div class="test-row"><span class="test-icon">${x.pass ? '✓' : '×'}</span><span>${esc(x.name)}</span></div>`).join('')}<div class="console">${esc(consoleText)}</div>`;
+    }
+    function renderProgress() { const n = state.done.filter(Boolean).length; $('progressText').textContent = `${n} / ${tasks.length} selesai`; $('progressBar').style.width = `${n / tasks.length * 100}%` }
+    function toast(msg) { $('toast').textContent = msg; $('toast').classList.add('show'); setTimeout(() => $('toast').classList.remove('show'), 1800) }
+
+    function syncIdentity() { state.identity = { name: $('nameInput').value.trim(), school: $('schoolInput').value.trim(), date: $('dateInput').value }; save() }
+
+    function buildPrint() {
+      ['reflection1', 'conclusion'].forEach(id => { state[id] = $(id).value });
+      syncIdentity();
+      const i = state.identity; const n = state.done.filter(Boolean).length; const score = Math.round(n / tasks.length * 100);
+      $('printReport').innerHTML = `<div class="print-cover"><h1>Modul DOM 02 — Event Listener</h1><p>Laporan praktikum dan tugas</p><div class="print-meta"><div><strong>Nama:</strong> ${esc(i.name || 'Belum diisi')}</div><div><strong>Tanggal:</strong> ${esc(i.date || '-')}</div><div><strong>Sekolah/Kelas:</strong> ${esc(i.school || '-')}</div><div><strong>Skor:</strong> ${score}/100 (${n} dari ${tasks.length} latihan)</div></div></div>` +
+        tasks.map((t, k) => {
+          const isTugas = t.kind === 'tugas'; const num = isTugas ? k - 2 : k + 1;
+          return `<div class="print-section"><h2>${isTugas ? 'Tugas' : 'Praktikum'} ${num} — ${esc(t.title)}</h2><h3 class="print-status ${state.done[k] ? 'print-pass' : 'print-fail'}">${state.done[k] ? '✓ Lulus pengujian' : '× Belum lulus pengujian'}</h3><h3>Kode JavaScript</h3><div class="print-code">${esc(state.answers[k])}</div>${t.question ? `<h3>${esc(t.question)}</h3><div class="print-reflection">${esc(state.notes[k] || 'Belum diisi')}</div>` : ''}</div>`;
+        }).join('') +
+        `<div class="print-section"><h2>Refleksi</h2><h3>Fungsi preventDefault</h3><div class="print-reflection">${esc(state.reflection1 || 'Belum diisi')}</div><h3>Kesimpulan</h3><div class="print-reflection">${esc(state.conclusion || 'Belum diisi')}</div></div>`;
+    }
+
+    ['nameInput', 'schoolInput', 'dateInput'].forEach(id => $(id).addEventListener('input', syncIdentity));
+    ['reflection1', 'conclusion'].forEach(id => $(id).addEventListener('input', () => { state[id] = $(id).value; save() }));
+    $('printButton').onclick = () => { buildPrint(); window.print() };
+    $('printButton2').onclick = () => { buildPrint(); window.print() };
+    window.addEventListener('beforeprint', buildPrint);
+    load();
+  </script>
+</body>
+
+</html>
