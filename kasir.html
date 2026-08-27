@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POS Mini - Kasir</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f0efed;
+      color: #2c2c2b;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      width: 100%;
+      max-width: 450px;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #e6e5e3;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #2783de;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      background: #f9f8f7;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e6e5e3;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    button.tambah {
+      padding: 10px 16px;
+      background: #31875f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button.tambah:hover {
+      background: #266b4a;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 12px 16px;
+      border: 1px solid #e6e5e3;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    button.hapus {
+      padding: 6px 12px;
+      background: #fce9e7;
+      color: #d44f45;
+      border: 1px solid #efc4c0;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    button.hapus:hover {
+      background: #d44f45;
+      color: #fff;
+    }
+
+    .kosong {
+      text-align: center;
+      color: #6f6d68;
+      font-size: 14px;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h2>🛒 Mesin Kasir Mini</h2>
+
+    <form id="form-kasir">
+      <input type="text" id="input-barang" placeholder="Ketik nama barang...">
+      <button type="submit" class="tambah">Tambah</button>
+    </form>
+
+    <h3>Daftar Belanjaan</h3>
+    <ul id="daftar-keranjang">
+      <!-- Item kasir akan muncul di sini menggunakan JavaScript -->
+    </ul>
+
+    <p id="pesan-kosong" class="kosong">Keranjang masih kosong.</p>
+  </div>
+
+  <!-- Tag script JS buat di sini -->
+
+</body>
+
+</html>
+<!-- Buat file JavaScript dan hubungkan ke HTML.
+
+Tangkap elemen form #form-kasir, input #input-barang, keranjang #daftar-keranjang, dan pesan #pesan-kosong.
+
+Tambahkan event listener submit pada form.
+
+Wajib: Gunakan e.preventDefault() agar halaman tidak refresh.
+
+Ambil isi ketikan dari input barang menggunakan properti .value.
+
+Jika input kosong, hentikan program (bisa menggunakan if(value === "") return;).
+
+Buat elemen <li> baru menggunakan document.createElement("li").
+
+Isi teks <li> tersebut dengan nama barang dari input.
+
+Buat elemen tombol baru (<button>), beri teks "Hapus", lalu beri class hapus (gunakan .classList.add("hapus")).
+
+Masukkan (append) tombol Hapus ke dalam elemen <li>.
+
+Tambahkan event listener click pada tombol Hapus tersebut. Jika diklik, jalankan fungsi .remove() pada <li>.
+
+Masukkan (append) elemen <li> yang sudah utuh ke dalam #daftar-keranjang.
+
+Hilangkan pesan "Keranjang masih kosong" dengan menyembunyikannya (beri display: none atau hapus elemennya).
+
+Terakhir, kosongkan kembali isi input barang. -->

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Rental</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f0efed;
+      color: #2c2c2b;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      width: 100%;
+      max-width: 450px;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #e6e5e3;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #b76a2d;
+      border-bottom: 2px solid #fbebde;
+      padding-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #6f6d68;
+    }
+
+    select,
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    .total-box {
+      margin-top: 24px;
+      background: #e5f2fc;
+      border: 1px solid #cbe4f8;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .total-box p {
+      margin: 0 0 4px;
+      color: #2783de;
+      font-weight: bold;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .total-box h3 {
+      margin: 0;
+      color: #155f9f;
+      font-size: 32px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h2>🚙 Estimasi Harga Rental</h2>
+
+    <div class="form-group">
+      <label>Pilih Jenis Kendaraan</label>
+      <select id="jenis-kendaraan">
+        <option value="0">-- Pilih Kendaraan --</option>
+        <option value="50000">Motor Matic (Rp 50.000/hari)</option>
+        <option value="150000">Motor Sport (Rp 150.000/hari)</option>
+        <option value="350000">Mobil Avanza (Rp 350.000/hari)</option>
+        <option value="500000">Mobil Innova (Rp 500.000/hari)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Lama Sewa (Hari)</label>
+      <input type="number" id="lama-sewa" placeholder="0" min="0">
+    </div>
+
+    <div class="total-box">
+      <p>Total Bayar</p>
+      <h3>Rp <span id="total-harga">0</span></h3>
+    </div>
+  </div>
+
+  <!-- Tag script JS buat di sini -->
+
+</body>
+
+</html>
+<!-- Buat file JavaScript dan hubungkan ke HTML.
+
+Tangkap elemen dropdown #jenis-kendaraan, input hari #lama-sewa, dan teks hasil #total-harga.
+
+Buat sebuah function mandiri bernama hitungTotal().
+
+Di dalam fungsi hitungTotal(), ambil nilai (value) dari dropdown jenis kendaraan dan ubah menjadi angka (Number(...)).
+
+Masih di fungsi yang sama, ambil nilai (value) dari input hari dan ubah juga menjadi angka.
+
+Buat pengkondisian: Jika hari kurang dari 0 atau kosong, anggap hari = 0.
+
+Kalikan harga kendaraan dengan lama sewa.
+
+Tampilkan hasil perhitungan tersebut ke dalam elemen #total-harga menggunakan textContent.
+
+Langkah penting: Tambahkan event listener change pada elemen #jenis-kendaraan. Di dalamnya, panggil fungsi hitungTotal().
+
+Langkah penting: Tambahkan event listener input pada elemen #lama-sewa. Di dalamnya, panggil juga fungsi hitungTotal(). -->

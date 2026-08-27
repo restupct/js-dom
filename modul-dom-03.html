@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modul DOM 03 — Event Listener Lanjutan</title>
+<style>
+:root{--ink:#2c2c2b;--muted:#6f6d68;--canvas:#fff;--soft:#f9f8f7;--surface:#f0efed;--line:#e6e5e3;--blue:#2783de;--blue-soft:#e5f2fc;--green:#31875f;--green-soft:#e8f1ec;--orange:#b76a2d;--orange-soft:#fbebde;--red:#d44f45;--red-soft:#fce9e7;--code:#202124;--radius:10px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--soft);color:var(--ink);font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.topbar{position:sticky;top:0;z-index:30;background:var(--canvas);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:900px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px}
+.logo{width:34px;height:34px;border-radius:8px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.brand{font-weight:750;font-size:15px;line-height:1.25}
+.brand small{display:block;color:var(--muted);font-weight:500;font-size:12.5px}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.prog{display:flex;align-items:center;gap:9px}
+.prog-text{font-size:12.5px;color:var(--muted);white-space:nowrap;font-weight:650}
+.prog-track{width:110px;height:7px;border-radius:99px;background:var(--surface);overflow:hidden}
+.prog-bar{height:100%;width:0;background:var(--green);border-radius:99px;transition:width .3s}
+.subnav{position:sticky;top:59px;z-index:29;background:var(--soft);border-bottom:1px solid var(--line)}
+.subnav-in{max-width:900px;margin:0 auto;padding:0 24px;display:flex;gap:4px;overflow-x:auto}
+.subnav a{padding:11px 13px;font-size:14px;font-weight:650;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.subnav a:hover{color:var(--ink)}
+.wrap{max-width:900px;margin:0 auto;padding:32px 24px 72px}
+section{scroll-margin-top:112px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+h1{font-size:32px;line-height:1.14;letter-spacing:-.02em;margin:7px 0 10px}
+h2.sec{font-size:24px;letter-spacing:-.01em;margin:44px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:17.5px;margin:26px 0 8px}
+h4{font-size:15px;margin:18px 0 6px}
+p{margin:0 0 12px}
+.lede{font-size:17px;color:var(--muted);max-width:620px}
+.card{background:var(--canvas);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:0 0 18px}
+.goal{background:var(--blue-soft);border:1px solid #cbe4f8;border-radius:var(--radius);padding:20px 24px;margin:22px 0 8px}
+.goal h3{margin:0 0 8px;font-size:16px}
+.goal ol{margin:0;padding-left:20px}
+.goal li{margin:6px 0}
+code{background:var(--surface);padding:1.5px 5px;border-radius:4px;font-family:Consolas,"Courier New",monospace;font-size:.9em}
+pre{margin:0 0 12px;padding:14px 16px;border-radius:8px;background:var(--code);color:#e8eaed;overflow-x:auto;font:13.5px/1.6 Consolas,"Courier New",monospace}
+pre.plain{background:var(--surface);color:var(--ink)}
+pre.tree{background:var(--surface);color:var(--ink);font-size:13px;line-height:1.75}
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:0 0 14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+tbody tr:last-child td{border-bottom:0}
+.callout{border-radius:9px;padding:14px 16px;margin:0 0 14px;font-size:15px;border:1px solid}
+.callout.info{background:var(--blue-soft);border-color:#cbe4f8}
+.callout.warn{background:var(--orange-soft);border-color:#f0d4bb}
+.callout.bad{background:var(--red-soft);border-color:#efc4c0}
+.callout strong{display:block;margin-bottom:3px}
+ul.tight{margin:0 0 12px;padding-left:22px}
+ul.tight li{margin:5px 0}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.compare > div{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:14px 16px}
+.compare h4{margin:0 0 7px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.compare p{margin:0;font-size:14.5px}
+.ex{background:var(--canvas);border:1px solid var(--line);border-radius:var(--radius);margin:0 0 22px;overflow:hidden}
+.ex-head{padding:18px 22px;border-bottom:1px solid var(--line);background:var(--soft)}
+.ex-meta{display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap}
+.badge{padding:3px 9px;border-radius:6px;font-size:12px;font-weight:750;background:var(--blue-soft);color:#155f9f}
+.badge.task{background:var(--orange-soft);color:#85501f}
+.badge.ok{background:var(--green-soft);color:#1f6644}
+.ex-head h3{margin:0 0 4px;font-size:19px}
+.ex-head .target{margin:0;color:var(--muted);font-size:14.5px}
+.ex-body{padding:20px 22px}
+.ex-body > p:first-child{margin-top:0}
+details{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:11px 14px;margin:0 0 14px}
+details summary{cursor:pointer;font-weight:650;font-size:14.5px}
+details pre{margin:12px 0 2px}
+.label{font-size:12px;font-weight:750;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:16px 0 6px;display:flex;align-items:center;gap:10px}
+.label .btns{margin-left:auto;display:flex;gap:7px}
+textarea.editor{width:100%;min-height:190px;background:var(--code);color:#e8eaed;border:0;border-radius:8px;padding:14px 16px;font:13.5px/1.7 Consolas,"Courier New",monospace;resize:vertical;tab-size:2}
+textarea.editor:focus-visible{outline:3px solid rgba(39,131,222,.4);outline-offset:1px}
+textarea.note{width:100%;min-height:76px;background:var(--canvas);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:11px 13px;font:15px/1.6 inherit;resize:vertical}
+textarea.note:focus-visible{outline:3px solid rgba(39,131,222,.28);outline-offset:1px}
+.btn{border:1px solid var(--line);background:var(--canvas);color:var(--ink);border-radius:8px;min-height:38px;padding:8px 13px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--surface)}
+.btn:focus-visible{outline:3px solid rgba(39,131,222,.28);outline-offset:2px}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:#1f6fc0}
+.btn.big{min-height:44px;padding:11px 20px;font-size:15px}
+.frame-wrap{border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--canvas);min-height:150px;position:relative;}
+.frame-wrap iframe{width:100%;height:230px;border:0;display:block;background:#fff}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.result{display:none;margin-top:14px;border-radius:9px;padding:14px 16px;border:1px solid}
+.result.show{display:block}
+.result.pass{background:var(--green-soft);border-color:#bddbc9}
+.result.fail{background:var(--red-soft);border-color:#efc4c0}
+.result h4{margin:0 0 8px;font-size:15px}
+.test-row{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;margin:4px 0}
+.test-icon{font-weight:800;width:15px;flex:none}
+.console{margin-top:10px;background:var(--code);color:#e8eaed;border-radius:7px;padding:10px 13px;font:12.5px/1.6 Consolas,"Courier New",monospace;white-space:pre-wrap;max-height:150px;overflow:auto}
+.ident{display:grid;grid-template-columns:1fr 1fr 170px;gap:12px}
+.ident label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.ident input{width:100%;min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--canvas)}
+.ident input:focus-visible{outline:3px solid rgba(39,131,222,.28);outline-offset:1px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:9px;font-size:14.5px;font-weight:650;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%)}
+#printReport{display:none}
+footer{color:var(--muted);font-size:13.5px;text-align:center;margin-top:40px}
+@media(max-width:760px){.compare{grid-template-columns:1fr}.ident{grid-template-columns:1fr}.topbar-in,.subnav-in,.wrap{padding-left:16px;padding-right:16px}h1{font-size:26px}.prog-track{width:70px}}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;font-size:10.5pt}
+  .topbar,.subnav,.wrap,.toast{display:none!important}
+  #printReport{display:block}
+  .print-cover{border-bottom:2px solid #2c2c2b;padding-bottom:12px;margin-bottom:16px}
+  .print-cover h1{font-size:19pt;margin:0 0 4px}
+  .print-cover p{color:#555;margin:0}
+  .print-meta{display:grid;grid-template-columns:1fr 1fr;gap:5px 20px;margin-top:12px;font-size:10pt}
+  .print-section{break-inside:avoid;border:1px solid #ccc;border-radius:6px;padding:12px 14px;margin-bottom:12px}
+  .print-section h2{font-size:12.5pt;margin:0 0 6px}
+  .print-section h3{font-size:9.5pt;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;color:#555}
+  .print-code{background:#f4f4f4;border:1px solid #ddd;border-radius:4px;padding:8px 10px;font:8.6pt/1.5 Consolas,monospace;white-space:pre-wrap}
+  .print-reflection{border:1px solid #ddd;border-radius:4px;padding:8px 10px;min-height:34px;font-size:10pt}
+  .print-status{font-weight:800}
+  .print-pass{color:#1f6644}
+  .print-fail{color:#a5352c}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="logo">DOM</div>
+    <div class="brand">Modul DOM 03<small>Event Lanjutan • Form, Keyboard, &amp; Mouse</small></div>
+    <div class="top-right">
+      <div class="prog">
+        <span class="prog-text" id="progressText">0 / 5 selesai</span>
+        <div class="prog-track"><div class="prog-bar" id="progressBar"></div></div>
+      </div>
+      <button class="btn" id="printButton">⎙ Cetak / Simpan PDF</button>
+    </div>
+  </div>
+</header>
+
+<nav class="subnav"><div class="subnav-in">
+  <a href="#materi">Materi</a>
+  <a href="#praktikum">Praktikum</a>
+  <a href="#tugas">Tugas</a>
+  <a href="#laporan">Pengumpulan</a>
+</div></nav>
+
+<div class="wrap">
+
+<section id="materi">
+  <div class="eyebrow">Manipulasi Lanjut • Hari 4 dari 4</div>
+  <h1>Berinteraksi lebih dalam dari sekadar 'Klik'.</h1>
+  <p class="lede">Pengguna web tidak hanya mengeklik tombol. Mereka mengetik, menekan Enter, memilih dropdown, dan menggeser mouse. Hari ini kita akan menyadap semua aktivitas tersebut secara <em>real-time</em>.</p>
+
+  <div class="goal">
+    <h3>Tujuan pembelajaran</h3>
+    <ol>
+      <li>Mendeteksi ketikan langsung menggunakan event <code>input</code> dan <code>change</code>.</li>
+      <li>Mengenali tombol yang ditekan (seperti Enter atau Escape) menggunakan event <code>keydown</code>.</li>
+      <li>Membuat efek hover kustom dengan <code>mouseenter</code> dan <code>mouseleave</code>.</li>
+      <li>Membaca objek event (<code>e.target</code> dan <code>e.key</code>) untuk mendapatkan data spesifik.</li>
+    </ol>
+  </div>
+
+  <h2 class="sec">1. Event input & change (Real-time)</h2>
+  <p>Kalau kamu ingin memvalidasi form <strong>sebelum</strong> tombol simpan diklik (misalnya menghitung sisa karakter atau mengecek format email), gunakan event <code>"input"</code>.</p>
+  <pre>const formInput = document.querySelector("#username");
+
+formInput.addEventListener("input", function(e) {
+  // e.target.value adalah cara cepat mengambil isi ketikan
+  // dari elemen yang sedang memicu event ini.
+  console.log("Kamu mengetik: " + e.target.value);
+});</pre>
+  <p>Untuk elemen seperti <code>&lt;select&gt;</code> (dropdown) atau <code>&lt;input type="radio"&gt;</code>, kita biasanya memakai event <code>"change"</code> yang baru menyala setelah pengguna selesai memilih opsi.</p>
+
+  <h2 class="sec">2. Event keydown (Mendeteksi Keyboard)</h2>
+  <p>Bagaimana caranya agar saat di kolom chat, kita cukup menekan <strong>Enter</strong> tanpa repot mengeklik tombol Kirim? Gunakan <code>keydown</code> dan baca properti <code>e.key</code>.</p>
+  <pre>const kolomChat = document.querySelector("#chat");
+
+kolomChat.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    console.log("Pesan dikirim: " + e.target.value);
+    e.target.value = ""; // kosongkan setelah dikirim
+  }
+});</pre>
+  
+  <h2 class="sec">3. Event mouseenter & mouseleave (Hover JS)</h2>
+  <p>Di CSS, kamu mengenal pseudo-class <code>:hover</code> untuk mengubah warna. Di JavaScript, kamu bisa menggunakan <code>mouseenter</code> (saat mouse masuk) dan <code>mouseleave</code> (saat mouse keluar) untuk menjalankan logika kompleks, seperti memunculkan kotak <em>tooltip</em>, menjeda <em>slider</em>, atau memanggil data dari server.</p>
+  <pre>const kartu = document.querySelector(".kartu");
+
+kartu.addEventListener("mouseenter", function() {
+  console.log("Kursor masuk ke area kartu!");
+});
+
+kartu.addEventListener("mouseleave", function() {
+  console.log("Kursor pergi dari area kartu!");
+});</pre>
+</section>
+
+<section id="praktikum">
+  <h2 class="sec">Praktikum</h2>
+  <p>Tiga latihan ini dirancang untuk membiasakanmu dengan event baru. Mesin pemeriksa akan secara otomatis mengetik dan menggerakkan <em>mouse</em> ke elemenmu.</p>
+  <div id="praktikumList"></div>
+</section>
+
+<section id="tugas">
+  <h2 class="sec">Tugas</h2>
+  <p>Gabungkan materi ini untuk membuat fitur validasi <em>real-time</em> dan efek interaktif.</p>
+  <div id="tugasList"></div>
+</section>
+
+<section id="laporan">
+  <h2 class="sec">Pengumpulan</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Identitas peserta</h3>
+    <div class="ident">
+      <div><label for="nameInput">Nama lengkap</label><input id="nameInput" placeholder="Nama lengkapmu"></div>
+      <div><label for="schoolInput">Sekolah / Kelas</label><input id="schoolInput" placeholder="Contoh: SMK X — XI RPL"></div>
+      <div><label for="dateInput">Tanggal</label><input id="dateInput" type="date"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Refleksi</h3>
+    <div class="label" style="margin-top:14px">1. Apa perbedaan antara event "input" dan "submit"?</div>
+    <textarea class="note" id="reflection1" placeholder="Jelaskan kapan harus memakai input dan kapan memakai submit..."></textarea>
+    <div class="label">2. Kesimpulan (3–5 kalimat)</div>
+    <textarea class="note" id="conclusion" style="min-height:110px" placeholder="Tuliskan pemahamanmu tentang e.key dan e.target..."></textarea>
+  </div>
+
+  <div class="card" style="text-align:center">
+    <button class="btn primary big" id="printButton2">⎙ Cetak / Simpan PDF</button>
+  </div>
+</section>
+
+<footer>Modul DOM 03 — Event Lanjutan • Progresmu tersimpan otomatis di browser ini.</footer>
+</div>
+
+<div id="printReport"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE_CSS='body{font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;color:#2c2c2b;margin:0;padding:18px;background:#fff}h1,h2,h3{margin:0 0 8px}h2{font-size:19px}p{margin:0 0 8px}ul{padding-left:20px;margin:0 0 8px}li{margin:5px 0}strong{font-weight:750} button, input, select { font: inherit; } .hidden { display: none !important; }';
+
+const tasks=[
+{
+kind:'praktikum',
+title:'Penghitung Karakter Real-time',
+target:'Mendeteksi setiap ketikan menggunakan event "input".',
+brief:'Tangkap event <code>"input"</code> pada <code>#pesanInput</code>. Di dalam fungsinya, hitung jumlah karakter yang sudah diketik menggunakan <code>e.target.value.length</code>, lalu tuliskan angkanya ke dalam span <code>#jmlKarakter</code>.',
+question:'Mengapa e.target.value lebih disarankan dipakai di sini dibanding membaca ulang lewat querySelector?',
+markup:'<input id="pesanInput" placeholder="Ketik sesuatu...">\n<p>Jumlah Karakter: <strong id="jmlKarakter">0</strong></p>',
+html:'<!doctype html><html><head><meta charset="utf-8"><style>'+BASE_CSS+'input{padding:8px;border:1px solid #ccc;border-radius:6px;width:100%;max-width:300px}strong{color:#2783de;font-size:20px}</style></head><body><input id="pesanInput" placeholder="Ketik sesuatu..."><p>Jumlah Karakter: <strong id="jmlKarakter">0</strong></p>{{JS}}</body></html>',
+starter:'const input = document.querySelector("#pesanInput");\nconst teksJumlah = document.querySelector("#jmlKarakter");\n\ninput.addEventListener("input", function(e) {\n  // 1. Dapatkan panjang ketikan (length)\n  \n  \n  // 2. Tuliskan angkanya ke teksJumlah.textContent\n  \n});\n',
+tests:[
+['Angka berubah saat diketik "Halo"', async c => { c.type('#pesanInput', 'Halo'); await c.wait(50); return c.text('#jmlKarakter') === '4'; }],
+['Angka berubah secara real-time saat teks ditambah', async c => { c.type('#pesanInput', 'Halo Dunia'); await c.wait(50); return c.text('#jmlKarakter') === '10'; }],
+['Halaman berjalan tanpa error', c => !c.err()]
+]
+},
+{
+kind:'praktikum',
+title:'Pilih Tema (Dropdown)',
+target:'Menjalankan perintah ketika opsi dropdown (select) berubah menggunakan "change".',
+brief:'Jika pengguna memilih opsi warna lain di dropdown <code>#pilihWarna</code>, maka class pada <code>#layar</code> harus diubah sesuai warna tersebut. Gunakan <code>className</code> dan timpa dengan nilai dari <code>e.target.value</code>.',
+question:'Kapan sebaiknya kita memakai event "change" daripada "input"?',
+markup:'<select id="pilihWarna">\n  <option value="terang">Terang</option>\n  <option value="gelap">Gelap</option>\n</select>\n<div id="layar" class="terang">Mode Layar</div>',
+html:'<!doctype html><html><head><meta charset="utf-8"><style>'+BASE_CSS+'select{padding:6px 12px;border-radius:6px;margin-bottom:12px}#layar{padding:30px;border-radius:8px;text-align:center;font-weight:bold;transition:0.3s;border:1px solid #ccc}#layar.terang{background:#f9f8f7;color:#2c2c2b}#layar.gelap{background:#202124;color:#e8eaed}</style></head><body><select id="pilihWarna"><option value="terang">Terang</option><option value="gelap">Gelap</option></select><div id="layar" class="terang">Mode Layar</div>{{JS}}</body></html>',
+starter:'const dropdown = document.querySelector("#pilihWarna");\nconst layar = document.querySelector("#layar");\n\ndropdown.addEventListener("change", function(e) {\n  // Ambil nilai ("terang" atau "gelap") dari e.target.value\n  // Jadikan nilai tersebut sebagai class baru untuk layar\n  layar.className = e.target.value;\n});\n',
+tests:[
+['Class layar berubah menjadi "gelap" saat opsi Gelap dipilih', async c => { c.change('#pilihWarna', 'gelap'); await c.wait(50); return c.q('#layar').className === 'gelap'; }],
+['Halaman berjalan tanpa error', c => !c.err()]
+]
+},
+{
+kind:'praktikum',
+title:'Deteksi Tombol Enter',
+target:'Menangkap penekanan tombol spesifik di keyboard dengan "keydown".',
+brief:'Gunakan event <code>"keydown"</code> pada input <code>#kotakSandi</code>. Di dalam fungsi, buat pengecekan `if`. JIKA tombol yang ditekan adalah <code>"Enter"</code> (gunakan <code>e.key</code>), maka hapus class <code>hidden</code> dari elemen <code>#pesanSukses</code>.',
+experiment:'Coba tekan tombol lain (Spasi, Huruf A). Pesan sukses tidak boleh muncul kecuali tombol yang ditekan benar-benar Enter.',
+question:'Apa yang terjadi jika kita tidak menggunakan if (e.key === "Enter")?',
+markup:'<input id="kotakSandi" placeholder="Ketik lalu Enter">\n<p id="pesanSukses" class="hidden">Sandi Diterima!</p>',
+html:'<!doctype html><html><head><meta charset="utf-8"><style>'+BASE_CSS+'input{padding:8px;border:1px solid #ccc;border-radius:6px}#pesanSukses{color:#31875f;font-weight:bold;margin-top:12px;padding:8px;background:#e8f1ec;border-radius:6px;display:inline-block}</style></head><body><input id="kotakSandi" placeholder="Ketik lalu Enter"><br><p id="pesanSukses" class="hidden">Sandi Diterima!</p>{{JS}}</body></html>',
+starter:'const kotak = document.querySelector("#kotakSandi");\nconst pesan = document.querySelector("#pesanSukses");\n\nkotak.addEventListener("keydown", function(e) {\n  // Cek apakah tombol yang ditekan adalah Enter\n  if (e.key === "Enter") {\n    // Munculkan pesan dengan menghapus class hidden\n    \n  }\n});\n',
+tests:[
+['Pesan sukses TIDAK muncul saat ditekan tombol biasa', async c => { c.press('#kotakSandi', 'a'); await c.wait(50); return c.q('#pesanSukses').classList.contains('hidden'); }],
+['Pesan sukses muncul setelah ditekan tombol Enter', async c => { c.press('#kotakSandi', 'Enter'); await c.wait(50); return !c.q('#pesanSukses').classList.contains('hidden'); }],
+['Halaman berjalan tanpa error', c => !c.err()]
+]
+},
+{
+kind:'tugas',
+title:'Validasi Password Sederhana',
+target:'Mengkombinasikan event input dan pengkondisian (if-else).',
+brief:'Setiap kali <code>#passInput</code> diisi (event <code>input</code>), cek jumlah karakternya. Jika panjangnya <strong>kurang dari 8</strong>, ubah teks <code>#indikator</code> menjadi "Lemah" dan beri class <code>merah</code>. Jika <strong>8 atau lebih</strong>, ubah teks menjadi "Kuat" dan ganti class-nya menjadi <code>hijau</code>.',
+question:'Mengapa fitur seperti ini penting di website modern?',
+markup:'<input id="passInput" type="password" placeholder="Password">\n<span id="indikator" class="merah">Lemah</span>',
+html:'<!doctype html><html><head><meta charset="utf-8"><style>'+BASE_CSS+'input{padding:8px;border:1px solid #ccc;border-radius:6px}span{font-weight:bold;padding:4px 8px;border-radius:4px;margin-left:8px}.merah{background:#fce9e7;color:#d44f45}.hijau{background:#e8f1ec;color:#31875f}</style></head><body><input id="passInput" type="password" placeholder="Password"><span id="indikator" class="merah">Lemah</span>{{JS}}</body></html>',
+starter:'const password = document.querySelector("#passInput");\nconst indikator = document.querySelector("#indikator");\n\npassword.addEventListener("input", function(e) {\n  const panjang = e.target.value.length;\n  \n  if (panjang < 8) {\n    indikator.textContent = "Lemah";\n    indikator.className = "merah";\n  } else {\n    // Tulis kode untuk mengubah menjadi Kuat dan hijau\n    \n  }\n});\n',
+tests:[
+['Indikator menunjukkan "Lemah" untuk password 5 karakter', async c => { c.type('#passInput', 'admin'); await c.wait(50); return c.text('#indikator') === 'Lemah' && c.q('#indikator').className === 'merah'; }],
+['Indikator berubah "Kuat" (dan warna hijau) untuk password 8+ karakter', async c => { c.type('#passInput', 'admin1234'); await c.wait(50); return c.text('#indikator') === 'Kuat' && c.q('#indikator').className === 'hijau'; }],
+['Halaman berjalan tanpa error', c => !c.err()]
+]
+},
+{
+kind:'tugas',
+title:'Membuat Tooltip Kustom',
+target:'Menggabungkan mouseenter dan mouseleave.',
+brief:'Arahkan mouse ke atas <code>#btnInfo</code> untuk memunculkan <code>#tooltipInfo</code> (hapus class <code>hidden</code>). Ketika mouse pergi, sembunyikan kembali kotak info tersebut (tambahkan class <code>hidden</code>). Kamu membutuhkan DUA event listener terpisah di elemen yang sama.',
+question:'Apa yang terjadi jika kamu lupa menambahkan event mouseleave?',
+markup:'<button id="btnInfo">Arahkan Mouse (Hover)</button>\n<div id="tooltipInfo" class="hidden">Ini adalah info rahasia!</div>',
+html:'<!doctype html><html><head><meta charset="utf-8"><style>'+BASE_CSS+'button{padding:8px 16px;background:#2c2c2b;color:#fff;border:none;border-radius:6px;cursor:pointer}#tooltipInfo{margin-top:8px;padding:8px 12px;background:#fbebde;color:#b76a2d;border:1px solid #f0d4bb;border-radius:6px;width:max-content}</style></head><body><button id="btnInfo">Arahkan Mouse (Hover)</button><div id="tooltipInfo" class="hidden">Ini adalah info rahasia!</div>{{JS}}</body></html>',
+starter:'const tombolHover = document.querySelector("#btnInfo");\nconst tooltip = document.querySelector("#tooltipInfo");\n\n// 1. Event mouse masuk\ntombolHover.addEventListener("mouseenter", function() {\n  tooltip.classList.remove("hidden");\n});\n\n// 2. Buat event satu lagi untuk mouse pergi (mouseleave)\n\n',
+tests:[
+['Tooltip muncul saat kursor berada di atas tombol', async c => { c.hover('#btnInfo'); await c.wait(50); return !c.q('#tooltipInfo').classList.contains('hidden'); }],
+['Tooltip kembali sembunyi saat kursor pergi', async c => { c.hover('#btnInfo'); c.leave('#btnInfo'); await c.wait(50); return c.q('#tooltipInfo').classList.contains('hidden'); }],
+['Halaman berjalan tanpa error', c => !c.err()]
+]
+}
+];
+
+const KEY='domModul03EventLanjutanV1';
+let busy=false;
+let state={identity:{},answers:tasks.map(t=>t.starter),notes:tasks.map(()=>''),done:tasks.map(()=>false),results:tasks.map(()=>null),reflection1:'',conclusion:''};
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+function load(){
+  try{const saved=JSON.parse(localStorage.getItem(KEY));if(saved){state={...state,...saved};state.answers=tasks.map((t,i)=>saved.answers?.[i]??t.starter);state.notes=tasks.map((_,i)=>saved.notes?.[i]??'');state.done=tasks.map((_,i)=>!!saved.done?.[i]);state.results=tasks.map((_,i)=>saved.results?.[i]??null)}}catch(e){}
+  const d=new Date();
+  $('nameInput').value=state.identity.name||'';
+  $('schoolInput').value=state.identity.school||'';
+  $('dateInput').value=state.identity.date||`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  $('reflection1').value=state.reflection1||'';
+  $('conclusion').value=state.conclusion||'';
+  buildCards();
+  renderProgress();
+  tasks.forEach((t,i)=>{runPreview(i,t,state.answers[i]);renderResult(i)});
+}
+
+function cardHtml(t,i){
+  const isTugas=t.kind==='tugas';
+  const num=isTugas?i-2:i+1;
+  const label=isTugas?`Tugas ${num}`:`Praktikum ${num}`;
+  return `<article class="ex" id="ex-${i}">
+    <div class="ex-head">
+      <div class="ex-meta"><span class="badge ${isTugas?'task':''}">${label}</span><span class="badge ok" id="dot-${i}" style="display:none">✓ selesai</span></div>
+      <h3>${esc(t.title)}</h3>
+      <p class="target">${esc(t.target)}</p>
+    </div>
+    <div class="ex-body">
+      <p>${t.brief}</p>
+      <details><summary>Struktur HTML halaman</summary><pre class="plain" id="ref-${i}"></pre></details>
+      <div class="label">Kode JavaScript<span class="btns"><button class="btn" id="reset-${i}">Reset</button><button class="btn" id="run-${i}">▶ Jalankan saja</button></span></div>
+      <textarea class="editor" id="ed-${i}" spellcheck="false"></textarea>
+      <div class="label">Pratinjau halaman</div>
+      <div class="frame-wrap" id="pw-${i}"></div>
+      <p class="hint">Panel ini diawasi otomatis. Skrip penguji akan menyimulasikan ketikan dan gerakan mouse.</p>
+      <div class="result" id="rs-${i}"></div>
+      <div style="margin-top:16px"><button class="btn primary big" id="check-${i}">Jalankan &amp; Cek</button></div>
+      ${t.experiment?`<div class="callout info" style="margin-top:18px"><strong>Eksperimen</strong>${t.experiment}</div>`:''}
+      ${t.question?`<div class="label">Pertanyaan</div><p class="hint" style="margin:-2px 0 7px">${esc(t.question)}</p><textarea class="note" id="nt-${i}" placeholder="Jawabanmu ikut tercetak di laporan..."></textarea>`:''}
+    </div>
+  </article>`;
+}
+
+function buildCards(){
+  $('praktikumList').innerHTML=tasks.map((t,i)=>t.kind==='praktikum'?cardHtml(t,i):'').join('');
+  $('tugasList').innerHTML=tasks.map((t,i)=>t.kind==='tugas'?cardHtml(t,i):'').join('');
+  tasks.forEach((t,i)=>{
+    $('ref-'+i).textContent=t.markup;
+    $('ed-'+i).value=state.answers[i];
+    if(t.question)$('nt-'+i).value=state.notes[i]||'';
+    $('ed-'+i).addEventListener('input',()=>{state.answers[i]=$('ed-'+i).value;save()});
+    $('ed-'+i).addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();const el=e.target,s=el.selectionStart,n=el.selectionEnd;el.value=el.value.slice(0,s)+'  '+el.value.slice(n);el.selectionStart=el.selectionEnd=s+2;state.answers[i]=el.value;save()}});
+    if(t.question)$('nt-'+i).addEventListener('input',()=>{state.notes[i]=$('nt-'+i).value;save()});
+    $('reset-'+i).onclick=()=>{if(confirm('Kembalikan kode latihan ini ke kondisi awal?')){state.answers[i]=t.starter;state.done[i]=false;state.results[i]=null;$('ed-'+i).value=t.starter;save();renderProgress();renderResult(i);runPreview(i,t,t.starter)}};
+    $('run-'+i).onclick=()=>check(i,true);
+    $('check-'+i).onclick=()=>check(i,false);
+  });
+}
+
+function buildDoc(t,code){
+  const bridge='<script>window.__logs=[];window.__err=null;(function(){var _l=console.log;console.log=function(){try{window.__logs.push(Array.prototype.slice.call(arguments).map(function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" "))}catch(e){}try{_l.apply(console,arguments)}catch(e){}}})();window.addEventListener("error",function(e){if(!window.__err)window.__err=e.message});<\/script>';
+  const userScript='<script>try{\n'+code+'\n}catch(e){window.__err=e.message}<\/script>';
+  return t.html.replace('{{JS}}',bridge+userScript);
+}
+function runPreview(i,t,code){
+  return new Promise(resolve=>{
+    const wrap=$('pw-'+i);wrap.innerHTML='';
+    const f=document.createElement('iframe');
+    f.setAttribute('title','Pratinjau halaman');
+    const fit=()=>{try{const b=f.contentDocument.body;const hh=Math.max(b.scrollHeight,Math.ceil(b.getBoundingClientRect().bottom));f.style.height=Math.min(560,Math.max(170,hh+22))+'px'}catch(e){}};
+    f.addEventListener('load',()=>{fit();setTimeout(fit,90);resolve(f)},{once:true});
+    wrap.appendChild(f);
+    f.srcdoc=buildDoc(t,code);
+  });
+}
+function makeCtx(frame){
+  const f=frame;
+  const doc=()=>f.contentDocument;
+  return {
+    f: f,
+    q:sel=>doc().querySelector(sel),
+    all:sel=>Array.from(doc().querySelectorAll(sel)),
+    text:sel=>{const el=doc().querySelector(sel);return el?el.textContent.trim():null},
+    has:(sel,cls)=>{const el=doc().querySelector(sel);return !!el&&el.classList.contains(cls)},
+    click:sel=>{const el=doc().querySelector(sel);if(el)el.click()},
+    submit:sel=>{const el=doc().querySelector(sel);if(el)el.dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}))},
+    type:(sel,val)=>{const el=doc().querySelector(sel);if(el){el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}))}},
+    change:(sel,val)=>{const el=doc().querySelector(sel);if(el){el.value=val;el.dispatchEvent(new Event('change',{bubbles:true}))}},
+    press:(sel,k)=>{const el=doc().querySelector(sel);if(el){el.dispatchEvent(new KeyboardEvent('keydown',{key:k,bubbles:true}))}},
+    hover:(sel)=>{const el=doc().querySelector(sel);if(el){el.dispatchEvent(new MouseEvent('mouseenter',{bubbles:true}))}},
+    leave:(sel)=>{const el=doc().querySelector(sel);if(el){el.dispatchEvent(new MouseEvent('mouseleave',{bubbles:true}))}},
+    wait:ms=>new Promise(r=>setTimeout(r,ms||60)),
+    err(){try{return f.contentWindow.__err||null}catch(e){return null}},
+    logs(){try{return (f.contentWindow.__logs||[]).slice()}catch(e){return []}}
+  };
+}
+async function check(i,onlyRun){
+  if(busy)return;busy=true;
+  const btn=$('check-'+i);const label=btn.textContent;
+  btn.disabled=true;$('run-'+i).disabled=true;btn.textContent='Menguji…';
+  try{
+    state.answers[i]=$('ed-'+i).value;
+    const t=tasks[i];const code=state.answers[i];
+    const f=await runPreview(i,t,code);
+    const ctx=makeCtx(f);
+    await ctx.wait(120); 
+    if(onlyRun){
+      state.results[i]={only:true,error:ctx.err(),logs:ctx.logs()};
+      save();renderResult(i);return;
+    }
+    const rows=[];
+    for(const [name,fn] of t.tests){let pass=false;try{pass=!!await fn(ctx)}catch(e){pass=false}rows.push({name,pass})}
+    const passed=rows.every(x=>x.pass);
+    state.done[i]=passed;
+    state.results[i]={passed,rows,error:ctx.err(),logs:ctx.logs()};
+    save();renderProgress();renderResult(i);
+    toast(passed?(t.kind==='tugas'?'Tugas selesai!':'Praktikum selesai!'):'Belum sesuai — periksa hasilnya.');
+  }finally{
+    busy=false;btn.disabled=false;$('run-'+i).disabled=false;btn.textContent=label;
+  }
+}
+function renderResult(i){
+  const res=state.results[i];const box=$('rs-'+i);const dot=$('dot-'+i);
+  if(dot)dot.style.display=state.done[i]?'inline-block':'none';
+  if(!box)return;
+  if(!res){box.className='result';box.innerHTML='';return}
+  const consoleText=res.logs&&res.logs.length?res.logs.join('\n'):'Tidak ada output console.log().';
+  if(res.only){
+    box.className=`result show ${res.error?'fail':'pass'}`;
+    box.innerHTML=`<h4>${res.error?'Halaman memunculkan error':'Kode berhasil dijalankan'}</h4>${res.error?`<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>`:'<div class="test-row"><span>Cek hasilnya di panel atas.</span></div>'}<div class="console">${esc(consoleText)}</div>`;
+    return;
+  }
+  box.className=`result show ${res.passed?'pass':'fail'}`;
+  box.innerHTML=`<h4>${res.passed?'✓ Semua pengujian berhasil':'Periksa kembali kodemu'}</h4>${res.error?`<div class="test-row"><span class="test-icon">×</span><span>${esc(res.error)}</span></div>`:''}${(res.rows||[]).map(x=>`<div class="test-row"><span class="test-icon">${x.pass?'✓':'×'}</span><span>${esc(x.name)}</span></div>`).join('')}<div class="console">${esc(consoleText)}</div>`;
+}
+function renderProgress(){const n=state.done.filter(Boolean).length;$('progressText').textContent=`${n} / ${tasks.length} selesai`;$('progressBar').style.width=`${n/tasks.length*100}%`}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+
+function syncIdentity(){state.identity={name:$('nameInput').value.trim(),school:$('schoolInput').value.trim(),date:$('dateInput').value};save()}
+
+function buildPrint(){
+  ['reflection1','conclusion'].forEach(id=>{state[id]=$(id).value});
+  syncIdentity();
+  const i=state.identity;const n=state.done.filter(Boolean).length;const score=Math.round(n/tasks.length*100);
+  $('printReport').innerHTML=`<div class="print-cover"><h1>Modul DOM 03 — Event Lanjutan</h1><p>Laporan praktikum dan tugas</p><div class="print-meta"><div><strong>Nama:</strong> ${esc(i.name||'Belum diisi')}</div><div><strong>Tanggal:</strong> ${esc(i.date||'-')}</div><div><strong>Sekolah/Kelas:</strong> ${esc(i.school||'-')}</div><div><strong>Skor:</strong> ${score}/100 (${n} dari ${tasks.length} latihan)</div></div></div>`+
+  tasks.map((t,k)=>{
+    const isTugas=t.kind==='tugas';const num=isTugas?k-2:k+1;
+    return `<div class="print-section"><h2>${isTugas?'Tugas':'Praktikum'} ${num} — ${esc(t.title)}</h2><h3 class="print-status ${state.done[k]?'print-pass':'print-fail'}">${state.done[k]?'✓ Lulus pengujian':'× Belum lulus pengujian'}</h3><h3>Kode JavaScript</h3><div class="print-code">${esc(state.answers[k])}</div>${t.question?`<h3>${esc(t.question)}</h3><div class="print-reflection">${esc(state.notes[k]||'Belum diisi')}</div>`:''}</div>`;
+  }).join('')+
+  `<div class="print-section"><h2>Refleksi</h2><h3>Input vs Submit</h3><div class="print-reflection">${esc(state.reflection1||'Belum diisi')}</div><h3>Kesimpulan</h3><div class="print-reflection">${esc(state.conclusion||'Belum diisi')}</div></div>`;
+}
+
+['nameInput','schoolInput','dateInput'].forEach(id=>$(id).addEventListener('input',syncIdentity));
+['reflection1','conclusion'].forEach(id=>$(id).addEventListener('input',()=>{state[id]=$(id).value;save()}));
+$('printButton').onclick=()=>{buildPrint();window.print()};
+$('printButton2').onclick=()=>{buildPrint();window.print()};
+window.addEventListener('beforeprint',buildPrint);
+load();
+</script>
+</body>
+</html>
